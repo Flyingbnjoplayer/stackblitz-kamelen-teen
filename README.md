@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🎨 Glitch NFT Studio
 
-## Getting Started
+A retro-style photo editing app that lets you create glitch art and mint it as NFTs on the Base network.
 
-First, run the development server:
+## ✨ Features
 
+- **Glitch Effects**: Apply retro glitch effects to your images with customizable intensity
+- **NFT Minting**: Mint your artwork as NFTs on the Base network using OnchainKit
+- **Social Sharing**: Share your creations on Farcaster and Based
+- **Wallet Integration**: View your wallet balance and connected address
+- **Download Artwork**: Save your glitch art to your device
+- **Farcaster Mini-App**: Fully integrated as a Farcaster Mini App
+
+## 🚀 Tech Stack
+
+- **Next.js 15** - React framework
+- **TypeScript** - Type-safe development
+- **OnchainKit** - Base network integration
+- **Farcaster Mini-App SDK** - Native Farcaster integration
+- **Vercel Blob** - Image storage
+- **Tailwind CSS** - Styling
+
+## 🛠️ Setup
+
+### Prerequisites
+
+- Node.js 18+ installed
+- A Vercel account
+- A Farcaster account (for mini-app features)
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <your-repo-url>
+cd glitch-nft-studio
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+pnpm install
+```
+
+3. Set up environment variables:
+   - See `SETUP_GUIDE.md` for detailed instructions on configuring Vercel Blob storage
+
+4. Run the development server:
 ```bash
 npm run dev
 # or
-yarn dev
-# or
 pnpm dev
-# or
-bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📖 Documentation
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+For detailed setup instructions, including:
+- Creating a Vercel account
+- Deploying to Vercel
+- Configuring Blob storage
+- Troubleshooting common issues
 
-## Learn More
+Please refer to [SETUP_GUIDE.md](./SETUP_GUIDE.md)
 
-To learn more about Next.js, take a look at the following resources:
+## 🎯 Usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Upload an Image**: Click the upload area or drag and drop an image
+2. **Apply Glitch Effect**: Use the intensity slider to adjust the glitch effect
+3. **Mint as NFT**: Connect your wallet and mint your artwork on Base
+4. **Share**: Share your creation on Farcaster or Based
+5. **Download**: Save your glitch art to your device
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## 🌐 Deployment
 
-## Deploy on Vercel
+This app is designed to be deployed on Vercel:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 🐛 Issues
+
+If you encounter any issues, please report them on the [Issues](../../issues) page.
+
+## 🙏 Acknowledgments
+
+- Built with [OnchainKit](https://onchainkit.xyz/)
+- Powered by [Farcaster](https://www.farcaster.xyz/)
+- Deployed on [Vercel](https://vercel.com/)
+- Base network by [Coinbase](https://base.org/)
