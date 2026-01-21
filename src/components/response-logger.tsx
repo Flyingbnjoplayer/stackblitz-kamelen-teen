@@ -7,6 +7,10 @@ export function ResponseLogger() {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      console.log("[ResponseLogger] Component mounted");
+    }
+
     const logResponse = async () => {
       try {
         const requestId = document
