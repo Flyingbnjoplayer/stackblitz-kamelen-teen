@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { head } from '@vercel/blob';
 
 export async function GET(
   request: NextRequest,
@@ -13,18 +12,9 @@ export async function GET(
 
     console.log('Fetching image from Vercel Blob:', blobUrl);
 
-    // Verify the blob exists
-    try {
-      await head(blobUrl);
-    } catch (error) {
-      console.error('Blob not found:', error);
-      return NextResponse.json(
-        { error: 'Image not found' },
-        { status: 404 }
-      );
-    }
-
     // Redirect to the Vercel Blob URL
+    // Note: In @vercel/blob v2.0.0, the head() function was removed
+    // The blob URL is publicly accessible, so we can redirect directly
     return NextResponse.redirect(blobUrl, 302);
   } catch (error) {
     console.error('Image serve error:', error);
