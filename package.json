@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@coinbase/onchainkit": "^1.1.2",
+    "@eslint/eslintrc": "^3.3.3",
     "@farcaster/miniapp-sdk": "0.2.1",
     "@farcaster/quick-auth": "0.0.7",
     "@hookform/resolvers": "^5.0.1",
