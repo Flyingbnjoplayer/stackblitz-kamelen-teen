@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
+   },
+  typescript: {
+    // Keep TypeScript checking enabled
+    ignoreBuildErrors: false,
+  
   },
   webpack: (config) => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
