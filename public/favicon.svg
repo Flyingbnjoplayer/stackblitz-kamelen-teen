@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#000000"/>
+  <path d="M8 8 L24 8 L20 16 L28 16 L12 28 L16 18 L8 18 Z" fill="#00FFFF" opacity="0.8"/>
+  <path d="M8 8 L24 8 L20 16 L28 16 L12 28 L16 18 L8 18 Z" fill="#FF00FF" opacity="0.6" transform="translate(2, 1)"/>
+  <path d="M8 8 L24 8 L20 16 L28 16 L12 28 L16 18 L8 18 Z" fill="#FFFF00" opacity="0.4" transform="translate(-1, 2)"/>
+</svg>
+Note: Update your src/app/layout.tsx to reference the SVG:
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
