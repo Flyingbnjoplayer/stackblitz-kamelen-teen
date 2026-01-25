@@ -5,8 +5,8 @@ import "./globals.css";
 import { ResponseLogger } from "../components/response-logger";
 import { ReadyNotifier } from "../components/ready-notifier";
 import { Providers } from "./providers";
-import FarcasterWrapper from "@/components/FarcasterWrapper";
-import { Toaster } from "@/components/ui/sonner";
+import FarcasterWrapper from "../components/FarcasterWrapper";
+import { Toaster } from "../components/ui/sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
