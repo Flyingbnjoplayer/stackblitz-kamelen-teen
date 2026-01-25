@@ -4,12 +4,9 @@ import { useEffect } from 'react'
 
 export function ResponseLogger() {
   useEffect(() => {
-    // Log successful responses from API calls
     const originalFetch = window.fetch
     window.fetch = async (...args) => {
       const response = await originalFetch(...args)
-      
-      // Clone the response so we can read it
       const clonedResponse = response.clone()
       
       try {
@@ -26,7 +23,6 @@ export function ResponseLogger() {
       return response
     }
 
-    // Cleanup
     return () => {
       window.fetch = originalFetch
     }
@@ -34,4 +30,3 @@ export function ResponseLogger() {
 
   return null
 }
-
