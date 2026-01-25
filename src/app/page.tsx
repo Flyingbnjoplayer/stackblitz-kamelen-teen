@@ -8,15 +8,15 @@ import { GlitchControls } from '@/components/glitch-controls';
 import { ShareButtons } from '@/components/share-buttons';
 import { sdk } from '@farcaster/miniapp-sdk';
 import { useAccount } from 'wagmi';
-import type { EffectState } from '@/components/glitch-controls';
-import { useAddMiniApp } from '@/hooks/useAddMiniApp';
-import { useQuickAuth } from '@/hooks/useQuickAuth';
-import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+import type { EffectState } from '../components/glitch-controls';
+import { useAddMiniApp } from '../hooks/useAddMiniApp';
+import { useQuickAuth } from '../hooks/useQuickAuth';
+import { useIsInFarcaster } from '../hooks/useIsInFarcaster';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../components/ui/alert-dialog';
+import { Button } from '../components/ui/button';
 import { RefreshCw, Download } from 'lucide-react';
-import { WalletConnectButton } from '@/components/wallet-connect-button';
-import { WalletInfoPanel } from '@/components/wallet-info-panel';
+import { WalletConnectButton } from '../components/wallet-connect-button';
+import { WalletInfoPanel } from '../components/wallet-info-panel';
 import { toast } from 'sonner';
 
 export default function Page() {
