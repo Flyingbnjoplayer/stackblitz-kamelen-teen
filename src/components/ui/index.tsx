@@ -1,52 +1,25 @@
-// src/components/ui/index.tsx
-// Barrel export file for UI components
-// Only import components that actually exist in your project
+import * as React from "react"
+import { cn } from "../../lib/utils"
 
-// Common components - uncomment the ones you have:
-export { Button, buttonVariants } from './button'
-// export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './card'
-// export { Input } from './input'
-// export { Label } from './label'
-// export { Textarea } from './textarea'
-// export { Select, SelectGroup, SelectValue, SelectTrigger, SelectContent, SelectLabel, SelectItem, SelectSeparator, SelectScrollUpButton, SelectScrollDownButton } from './select'
-// export { Switch } from './switch'
-// export { Badge, badgeVariants } from './badge'
-// export { Separator } from './separator'
-// export { Skeleton } from './skeleton'
-export { Toaster } from './sonner'
-export { toast } from 'sonner'
+export * from './alert-dialog';
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-// Advanced components - uncomment as needed:
-// export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './accordion'
-// export { AlertDialog, AlertDialogPortal, AlertDialogOverlay, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from './alert-dialog'
-// export { Alert, AlertTitle, AlertDescription } from './alert'
-// export { AspectRatio } from './aspect-ratio'
-// export { Avatar, AvatarImage, AvatarFallback } from './avatar'
-// export { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis } from './breadcrumb'
-// export { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from './carousel'
-// export { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, ChartStyle } from './chart'
-// export { Checkbox } from './checkbox'
-// export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './collapsible'
-// export { Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandShortcut, CommandSeparator } from './command'
-// export { ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem, ContextMenuCheckboxItem, ContextMenuRadioItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuShortcut, ContextMenuGroup, ContextMenuPortal, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuRadioGroup } from './context-menu'
-// export { Dialog, DialogPortal, DialogOverlay, DialogTrigger, DialogClose, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from './dialog'
-// export { Drawer, DrawerPortal, DrawerOverlay, DrawerTrigger, DrawerClose, DrawerContent, DrawerHeader, DrawerFooter, DrawerTitle, DrawerDescription } from './drawer'
-// export { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuGroup, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuRadioGroup } from './dropdown-menu'
-// export { Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, FormField, useFormField } from './form'
-// export { HoverCard, HoverCardTrigger, HoverCardContent } from './hover-card'
-// export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from './input-otp'
-// export { Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, MenubarSeparator, MenubarLabel, MenubarCheckboxItem, MenubarRadioGroup, MenubarRadioItem, MenubarPortal, MenubarSubContent, MenubarSubTrigger, MenubarGroup, MenubarSub, MenubarShortcut } from './menubar'
-// export { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuContent, NavigationMenuTrigger, NavigationMenuLink, NavigationMenuIndicator, NavigationMenuViewport, navigationMenuTriggerStyle } from './navigation-menu'
-// export { Pagination, PaginationContent, PaginationLink, PaginationItem, PaginationPrevious, PaginationNext, PaginationEllipsis } from './pagination'
-// export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from './popover'
-// export { Progress } from './progress'
-// export { RadioGroup, RadioGroupItem } from './radio-group'
-// export { ResizablePanelGroup, ResizablePanel, ResizableHandle } from './resizable'
-// export { ScrollArea, ScrollBar } from './scroll-area'
-// export { Sheet, SheetPortal, SheetOverlay, SheetTrigger, SheetClose, SheetContent, SheetHeader, SheetFooter, SheetTitle, SheetDescription } from './sheet'
-// export { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, useSidebar } from './sidebar'
-// export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from './table'
-// export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
-// export { Toggle, toggleVariants } from './toggle'
-// export { ToggleGroup, ToggleGroupItem } from './toggle-group'
-// export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './tooltip'
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn(
+          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Input.displayName = "Input"
+
+export { Input }
