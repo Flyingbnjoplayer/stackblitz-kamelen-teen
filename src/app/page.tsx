@@ -104,6 +104,11 @@ export default function Home() {
         throw new Error(data.error || 'Failed to mint NFT');
       }
 
+      if (!isConnected || !connectedAddress || !editedImage) {
+      alert('Please connect your wallet and edit an image first');
+        return;
+      }
+
       alert(`NFT Minted! Transaction: ${data.transactionHash}`);
     } catch (error) {
       console.error('Minting error:', error);
