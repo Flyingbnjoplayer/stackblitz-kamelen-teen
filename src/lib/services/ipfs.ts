@@ -1,4 +1,4 @@
-typescript
+//typescript
 export async function uploadToIPFS(imageData: string): Promise<string> {
   // For now, using a public IPFS gateway
   // You might want to use a service like Pinata, NFT.Storage, or Web3.Storage
