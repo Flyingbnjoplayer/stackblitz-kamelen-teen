@@ -76,6 +76,7 @@
   },
   "devDependencies": {
     "@anton-seriesfi/ts-typie": "^3.0.2",
+    "@next/eslint-plugin-next": "^16.1.6",
     "@types/date-fns": "^2.6.3",
     "@types/node": "20.17.47",
     "@types/react": "19.1.8",
