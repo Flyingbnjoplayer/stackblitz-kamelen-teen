@@ -232,4 +232,46 @@ export const glitchEffects: Record<string, GlitchEffect> = {
       return new ImageData(data, imageData.width, imageData.height);
     },
   },
+  
 };
+// Add a real high-level function that matches what page.tsx expects
+export async function applyGlitchEffect(
+  imageBase64: string,
+  effectId: string,
+  intensity: number,
+  canvas: HTMLCanvasElement
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Canvas context not available"));
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      const effect = glitchEffects[effectId];
+      if (!effect) {
+        reject(new Error(`Unknown glitch effect: ${effectId}`));
+        return;
+      }
+
+      // Apply the selected glitch effect
+      const output = effect.apply(imageData, intensity);
+
+      ctx.putImageData(output, 0, 0);
+
+      resolve(canvas.toDataURL("image/png"));
+    };
+
+    img.onerror = (e) => reject(e);
+
+    img.src = imageBase64;
+  });
+}
