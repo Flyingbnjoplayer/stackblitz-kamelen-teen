@@ -1,8 +1,16 @@
+//stackblitz-kamelen-teen/src/components/nft-mint-modal.tsx
 'use client';
 
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,7 +24,12 @@ export type NFTMintModalProps = {
   onMintSuccess?: () => void;
 };
 
-export function NFTMintModal({ isOpen, onClose, imageUrl, onMintSuccess }: NFTMintModalProps) {
+export function NFTMintModal({
+  isOpen,
+  onClose,
+  imageUrl,
+  onMintSuccess,
+}: NFTMintModalProps) {
   const { address, isConnected } = useAccount();
   const [nftName, setNftName] = useState<string>('');
   const [nftDescription, setNftDescription] = useState<string>('');
@@ -27,7 +40,6 @@ export function NFTMintModal({ isOpen, onClose, imageUrl, onMintSuccess }: NFTMi
       toast.error('Please connect your wallet first');
       return;
     }
-
     if (!nftName.trim()) {
       toast.error('Please enter a name for your NFT');
       return;
@@ -36,20 +48,18 @@ export function NFTMintModal({ isOpen, onClose, imageUrl, onMintSuccess }: NFTMi
     setIsMinting(true);
 
     try {
-      // Upload to IPFS or Arweave (simplified for demo)
       toast.loading('Uploading your glitch art...', { id: 'mint-toast' });
 
-      // Convert data URL to blob
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
+      // 1) Image ophalen
+      const resp = await fetch(imageUrl);
+      const blob = await resp.blob();
 
-      // Create FormData for upload
+      // 2) Metadata upload via jouw bestaande endpoint
       const formData = new FormData();
       formData.append('file', blob, 'glitch-art.png');
       formData.append('name', nftName);
       formData.append('description', nftDescription || 'Glitch art created on Base');
 
-      // Upload to your API endpoint
       const uploadResponse = await fetch('/api/upload-nft-metadata', {
         method: 'POST',
         body: formData,
@@ -63,32 +73,63 @@ export function NFTMintModal({ isOpen, onClose, imageUrl, onMintSuccess }: NFTMi
 
       const { metadataUri } = await uploadResponse.json();
 
-      toast.success('Metadata uploaded! Preparing to mint...', { id: 'mint-toast' });
+      toast.message('Metadata uploaded. Signing mint...', { id: 'mint-toast' });
 
-      // In a real implementation, you would use OnchainKit's NFT minting
-      // For now, we'll simulate the minting process
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // 3) (Tijdelijk) server endpoint aanroepen – placeholder tot contract klaar is
+      const mintResponse = await fetch('/api/mint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          metadataUri,
+          walletAddress: address,
+          name: nftName,
+          description: nftDescription,
+        }),
+      });
 
-      toast.success('✅ NFT Minted Successfully!', { id: 'mint-toast', duration: 5000 });
-
-      if (onMintSuccess) {
-        onMintSuccess();
+      if (!mintResponse.ok) {
+        const errorData = await mintResponse.json().catch(() => ({}));
+        const msg = (errorData as { error?: string }).error || 'Mint API failed';
+        throw new Error(msg);
       }
 
-      // Reset form and close
+      const mintJson = await mintResponse.json();
+
+      // 🔜 Zodra je contract + ABI hebt, vervangen we dit stuk door wagmi useWriteContract:
+      // const { writeContractAsync } = useWriteContract();
+      // await writeContractAsync({
+      //   address: CONTRACT_ADDRESS,
+      //   abi: GLITCH_NFT_ABI,
+      //   functionName: 'mint', // of 'safeMint', afhankelijk van jouw contract
+      //   args: [address, metadataUri],
+      // });
+
+      toast.success('✅ Mint request accepted. Configure on-chain write to complete.', {
+        id: 'mint-toast',
+        duration: 5000,
+      });
+
+      if (onMintSuccess) onMintSuccess();
+
       setNftName('');
       setNftDescription('');
       onClose();
+
+      // Extra feedback in console voor debugging
+      console.debug('Mint API response:', mintJson);
     } catch (error) {
       console.error('Minting error:', error);
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-      
-      // Provide user-friendly error messages
+
       let displayMsg = errorMsg;
-      if (errorMsg.includes('Image storage not configured') || errorMsg.includes('BLOB_READ_WRITE_TOKEN')) {
-        displayMsg = '⚠️ Image storage not configured. Please set up Vercel Blob in your project settings to mint NFTs.';
+      if (
+        errorMsg.includes('Image storage not configured') ||
+        errorMsg.includes('BLOB_READ_WRITE_TOKEN')
+      ) {
+        displayMsg =
+          '⚠️ Image storage not configured. Please set up Vercel Blob in your project settings to mint NFTs.';
       }
-      
+
       toast.error(`Failed to mint NFT: ${displayMsg}`, { id: 'mint-toast', duration: 6000 });
     } finally {
       setIsMinting(false);
@@ -147,9 +188,7 @@ export function NFTMintModal({ isOpen, onClose, imageUrl, onMintSuccess }: NFTMi
           {/* Wallet Status */}
           {!isConnected && (
             <div className="p-3 bg-yellow-500/20 border border-yellow-400/50 rounded-lg">
-              <p className="text-sm text-yellow-100">
-                ⚠️ Please connect your wallet to mint NFTs
-              </p>
+              <p className="text-sm text-yellow-100">⚠️ Please connect your wallet to mint NFTs</p>
             </div>
           )}
 
@@ -195,3 +234,4 @@ export function NFTMintModal({ isOpen, onClose, imageUrl, onMintSuccess }: NFTMi
     </Dialog>
   );
 }
+``
