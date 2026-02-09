@@ -1,8 +1,8 @@
 export default [{
-    import :,nextConfig, from ,'eslint-config-next/core-web-vitals'
+    import :nextConfig, from ,'eslint-config-next/core-web-vitals'
 // Your other config imports...
  
-:,const :,eslintConfig = [
+:const :eslintConfig = [
   // Your other configurations...
   ...nextConfig,
 ]
