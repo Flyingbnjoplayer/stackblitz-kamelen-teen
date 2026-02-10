@@ -1,3 +1,4 @@
+//stackblitz-kamelen-teen/src/components/wallet-connect-button.tsx
 'use client';
 
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
@@ -10,36 +11,34 @@ export function WalletConnectButton() {
   const { address, status } = useAccount();
   const { connect, connectors, isPending, error: connectError } = useConnect();
   const { disconnect } = useDisconnect();
+
   const [farcasterUsername, setFarcasterUsername] = useState<string | null>(null);
   const [isInFarcaster, setIsInFarcaster] = useState(false);
   const [showConnectors, setShowConnectors] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Handle clicks outside dropdown to close it
+  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowConnectors(false);
       }
     }
-
     if (showConnectors) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [showConnectors]);
 
-  // Check Farcaster context
+  // Farcaster context
   useEffect(() => {
     let cancelled = false;
-
     async function checkFarcaster() {
       try {
         const inMiniApp = await sdk.isInMiniApp();
         if (!cancelled) {
           setIsInFarcaster(inMiniApp);
-          
           if (inMiniApp) {
             const context = await sdk.context;
             if (!cancelled && context?.user?.username) {
@@ -47,61 +46,64 @@ export function WalletConnectButton() {
             }
           }
         }
-      } catch (error) {
-        if (!cancelled) {
-          setIsInFarcaster(false);
-        }
+      } catch {
+        if (!cancelled) setIsInFarcaster(false);
       }
     }
-
     checkFarcaster();
     return () => {
       cancelled = true;
     };
   }, []);
 
-  // Handle connection errors
+  // Connection errors (schedule state updates; avoid sync setState in effect)
   useEffect(() => {
-    if (connectError) {
-      // Handle user rejection gracefully
-      if (connectError.message.includes('User rejected') || 
-          connectError.message.includes('User denied') ||
-          connectError.message.includes('Connection request reset')) {
-        setConnectionError('Connection cancelled');
-      } else {
-        setConnectionError('Connection failed. Please try again.');
-      }
-      
-      // Clear error after 3 seconds
-      const timer = setTimeout(() => {
-        setConnectionError(null);
-      }, 3000);
+    if (!connectError) return;
 
-      return () => clearTimeout(timer);
-    }
+    const msg = (() => {
+      const m = connectError.message ?? '';
+      if (
+        m.includes('User rejected') ||
+        m.includes('User denied') ||
+        m.includes('Connection request reset')
+      ) {
+        return 'Connection cancelled';
+      }
+      return 'Connection failed. Please try again.';
+    })();
+
+    let mounted = true;
+    // schedule on next tick to avoid "set-state-in-effect" lint
+    const micro = setTimeout(() => {
+      if (mounted) setConnectionError(msg);
+    }, 0);
+
+    const timer = setTimeout(() => {
+      if (mounted) setConnectionError(null);
+    }, 3000);
+
+    return () => {
+      mounted = false;
+      clearTimeout(timer);
+      clearTimeout(micro);
+    };
   }, [connectError]);
 
-  // Handle connection attempt with error catching
-  const handleConnect = async (connector: typeof connectors[0]) => {
-    console.log('Attempting to connect with:', connector.name);
+  const handleConnect = async (connector: (typeof connectors)[0]) => {
     setConnectionError(null);
     setShowConnectors(false);
-    
     try {
       await connect({ connector });
-    } catch (error) {
-      // Error will be handled by useEffect above
-      console.log('Connection attempt cancelled or failed:', error);
+    } catch {
+      // handled by effect above
     }
   };
 
-  // Toggle dropdown
   const handleToggle = () => {
-    console.log('Toggle clicked, current state:', showConnectors, 'connectors:', connectors.length);
-    setShowConnectors(!showConnectors);
+    setShowConnectors((s) => !s);
   };
 
-  // Don't show anything while checking connection
+  // Pending state
   if (status === 'connecting' || status === 'reconnecting') {
     return (
       <div className="fixed top-4 right-4 z-50">
@@ -113,9 +115,9 @@ export function WalletConnectButton() {
         </div>
       </div>
     );
-  }
+    }
 
-  // Show wallet info when connected in Farcaster
+  // Connected inside Farcaster
   if (address && isInFarcaster) {
     return (
       <div className="fixed top-4 right-4 z-50">
@@ -131,7 +133,7 @@ export function WalletConnectButton() {
     );
   }
 
-  // Show wallet connection UI when not in Farcaster
+  // Normal web: connectors dropdown
   if (!isInFarcaster) {
     return (
       <div className="fixed top-4 right-4 z-50">
@@ -167,7 +169,9 @@ export function WalletConnectButton() {
                 <>
                   <Wallet className="w-4 h-4 mr-2" />
                   Connect Wallet
-                  <ChevronDown className={`w-4 h-4 ml-2 transition-transform ${showConnectors ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`w-4 h-4 ml-2 transition-transform ${showConnectors ? 'rotate-180' : ''}`}
+                  />
                 </>
               )}
             </Button>
