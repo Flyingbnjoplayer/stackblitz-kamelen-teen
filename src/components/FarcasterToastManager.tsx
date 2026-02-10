@@ -26,7 +26,7 @@ export default function FarcasterToastManager({
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // useRef instead of state to avoid “refs accessed during render”
+  // Avoid useState-related render reads → useRef instead
   const copySucceededRef = useRef(false);
 
   const copyAllAsJSON = useCallback(
@@ -45,6 +45,7 @@ export default function FarcasterToastManager({
             duration: 2000,
           });
         }
+
         return true;
       } catch (error) {
         console.error('Failed to copy to clipboard:', error);
@@ -52,6 +53,7 @@ export default function FarcasterToastManager({
         if (showToast) {
           toast.error('Failed to copy to clipboard', { duration: 2000 });
         }
+
         return false;
       }
     },
@@ -77,7 +79,7 @@ export default function FarcasterToastManager({
 
       (async () => {
         const ok = await copyAllAsJSON(result, false);
-        copySucceededRef.current = ok; // safe: NOT used in render
+        copySucceededRef.current = ok; // safe
       })();
 
       toast.success('Manifest Signed Successfully! 🎉', {
@@ -86,7 +88,7 @@ export default function FarcasterToastManager({
       });
 
       timeoutRef.current = setTimeout(() => {
-        const successful = copySucceededRef.current; // read here, safe (not render)
+        const successful = copySucceededRef.current;
 
         toast.info('Account Association Ready', {
           description: (
