@@ -18,21 +18,6 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const [lastTapTime, setLastTapTime] = useState<number>(0);
   const lastTapTimeRef = useRef<number>(0);
-
-  useEffect(() => {
-    if (isOpen) {
-      startCamera();
-    } else {
-      stopCamera();
-    }
-
-    return () => {
-      stopCamera();
-    };
-  }, [isOpen, facingMode]);
-
-
-
   const startCamera = async (): Promise<void> => {
     try {
       setError(null);
@@ -87,6 +72,22 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
       setError('Camera not ready. Please wait a moment and try again.');
       return;
     }
+    
+  useEffect(() => {
+    if (isOpen) {
+      startCamera();
+    } else {
+      stopCamera();
+    }
+
+    return () => {
+      stopCamera();
+    };
+  }, [isOpen, facingMode, startCamera, stopCamera]);
+
+
+
+  
 
     setIsCapturing(true);
     

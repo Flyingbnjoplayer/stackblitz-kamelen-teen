@@ -2,7 +2,7 @@
 //stackblitz-kamelen-teen/src/components/FarcasterToastManager.tsx
 'use client';
 
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 import { useManifestStatus } from '@/hooks/useManifestStatus';
@@ -144,13 +144,20 @@ export default function FarcasterToastManager({
     [isSigned, isLoading],
   );
 
+const handlers = useMemo(() => ({
+  onManifestSuccess: handleManifestSuccess,
+  onManifestError: handleManifestError,
+}), [
+  handleManifestSuccess,
+  handleManifestError,
+]);
+
   return (
     <>
       <Toaster />
-      {children({
-        onManifestSuccess: handleManifestSuccess,
-        onManifestError: handleManifestError,
-      })}
+      {children(
+       handlers
+      )}
     </>
   );
 }
