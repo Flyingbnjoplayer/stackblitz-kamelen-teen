@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2017",
+    "downlevelIteration": true,
+
     "lib": [
       "dom",
       "dom.iterable",
