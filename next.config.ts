@@ -1,11 +1,11 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  eslint: {
+  /*eslint: {
     // Disable ESLint during builds to avoid circular reference error
     // Type checking is still enforced
     ignoreDuringBuilds: true,
-  },
+  },*/
   images: {
     remotePatterns: [
       {
