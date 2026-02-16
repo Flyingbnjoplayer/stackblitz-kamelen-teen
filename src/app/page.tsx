@@ -27,8 +27,8 @@ export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const { address: connectedAddress, isConnected } = useAccount();
-  const { login } = useQuickAuth();
   const isInFarcaster = useIsInFarcaster();
+  useQuickAuth(isInFarcaster);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

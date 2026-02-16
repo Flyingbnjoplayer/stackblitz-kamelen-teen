@@ -10,7 +10,7 @@ interface UserData {
   primaryAddress?: string
 }
 
-export function useQuickAuth(isInFarcaster: boolean): void {
+export function useQuickAuth(isInFarcaster: boolean){
   const hasAuthenticated = useRef(false)
 
   useEffect(() => {
@@ -74,4 +74,5 @@ export function useQuickAuth(isInFarcaster: boolean): void {
 
     authenticateUser()
   }, [isInFarcaster])
+ 
 }
