@@ -3,7 +3,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 // ... rest of your page.tsx content (without 'use client' at top)
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+
 import { Upload, Sliders, Zap } from 'lucide-react';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
