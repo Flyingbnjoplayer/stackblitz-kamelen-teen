@@ -19,7 +19,8 @@ import { Button as UIButton } from '../components/ui';
 import { RefreshCw, Download } from 'lucide-react';
 import { WalletConnectButton } from '../components/wallet-connect-button';
 
-export default function Home() {
+
+export default function GlitchStudio() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [editedImage, setEditedImage] = useState<string | null>(null);
   const [glitchIntensity, setGlitchIntensity] = useState(50);
