@@ -1,0 +1,131 @@
+Folder PATH listing for volume OS
+Volume serial number is 50CF-9F17
+C:.
+¦   .env.example
+¦   .gitignore
+¦   components.json
+¦   core.txt
+¦   eslint.config.mjs
+¦   file-structure.txt
+¦   LICENSE
+¦   LICENSE.txt
+¦   next.config.mjs
+¦   next.config.ts
+¦   NFT_SETUP.md
+¦   package-lock.json
+¦   package.json
+¦   postcss.config.mjs
+¦   README.md
+¦   SETUP_GUIDE.md
+¦   tailwind.config.ts
+¦   tsconfig.json
+¦   
++---.devcontainer
+¦       devcontainer.json
+¦       
++---.vscode
+¦       launch.json
+¦       settings.json
+¦       
++---app
+¦       favicon.ico
+¦       globals.css
+¦       
++---public
+¦   ¦   favicon.svg
+¦   ¦   next.svg
+¦   ¦   vercel.svg
+¦   ¦   
+¦   +---.well-known
+¦           farcaster.json
+¦           
++---src
+    +---app
+    ¦   ¦   glitch-studio.tsx
+    ¦   ¦   globals.css
+    ¦   ¦   layout.tsx
+    ¦   ¦   not-found.tsx
+    ¦   ¦   page.tsx
+    ¦   ¦   providers.tsx
+    ¦   ¦   
+    ¦   +---api
+    ¦   ¦   +---health
+    ¦   ¦   ¦       route.ts
+    ¦   ¦   ¦       
+    ¦   ¦   +---images
+    ¦   ¦   ¦   +---[id]
+    ¦   ¦   ¦           route.ts
+    ¦   ¦   ¦           
+    ¦   ¦   +---logger
+    ¦   ¦   ¦       route.ts
+    ¦   ¦   ¦       
+    ¦   ¦   +---me
+    ¦   ¦   ¦       route.ts
+    ¦   ¦   ¦       
+    ¦   ¦   +---mint
+    ¦   ¦   ¦       route.ts
+    ¦   ¦   ¦       
+    ¦   ¦   +---proxy
+    ¦   ¦   ¦       route.ts
+    ¦   ¦   ¦       
+    ¦   ¦   +---upload
+    ¦   ¦   ¦       route.ts
+    ¦   ¦   ¦       
+    ¦   ¦   +---upload-nft-metadata
+    ¦   ¦           route.ts
+    ¦   ¦           
+    ¦   +---config
+    ¦   ¦       onchainkit.ts
+    ¦   ¦       
+    ¦   +---preview
+    ¦   ¦   +---[id]
+    ¦   ¦           page.tsx
+    ¦   ¦           route.ts
+    ¦   ¦           
+    ¦   +---types
+    ¦           api.ts
+    ¦           
+    +---components
+    ¦   ¦   camera-modal.tsx
+    ¦   ¦   FarcasterManifestSigner.tsx
+    ¦   ¦   FarcasterToastManager.tsx
+    ¦   ¦   FarcasterWrapper.tsx
+    ¦   ¦   glitch-controls.tsx
+    ¦   ¦   glitch-editor.tsx
+    ¦   ¦   nft-mint-modal.tsx
+    ¦   ¦   ready-notifier.tsx
+    ¦   ¦   response-logger.tsx
+    ¦   ¦   share-buttons.tsx
+    ¦   ¦   wallet-connect-button.tsx
+    ¦   ¦   wallet-info-panel.tsx
+    ¦   ¦   
+    ¦   +---ui
+    ¦           alert-dialog.tsx
+    ¦           button.tsx
+    ¦           card.tsx
+    ¦           dialog.tsx
+    ¦           index.tsx
+    ¦           input.tsx
+    ¦           label.tsx
+    ¦           rotary-knob.tsx
+    ¦           select.tsx
+    ¦           slider.tsx
+    ¦           sonner.tsx
+    ¦           tabs.tsx
+    ¦           
+    +---hooks
+    ¦       useAddMiniApp.ts
+    ¦       useIsInFarcaster.ts
+    ¦       useManifestStatus.ts
+    ¦       useQuickAuth.tsx
+    ¦       
+    +---lib
+        ¦   glitch-effects.ts
+        ¦   image-store.ts
+        ¦   social-share.ts
+        ¦   utils.ts
+        ¦   wagmi.ts
+        ¦   
+        +---services
+                ipfs.ts
+                
