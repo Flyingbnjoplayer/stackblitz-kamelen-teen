@@ -74,7 +74,6 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
-    "@anton-seriesfi/ts-typie": "^3.0.2",
     "@next/eslint-plugin-next": "^16.1.6",
     "@types/date-fns": "^2.6.3",
     "@types/node": "20.17.47",
