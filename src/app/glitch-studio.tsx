@@ -5,19 +5,19 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 // ... rest of your page.tsx content (without 'use client' at top)
 
 import { Upload, Sliders, Zap } from 'lucide-react';
-import { Card, CardContent } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Slider } from '../../components/ui/slider';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { applyGlitchEffect } from '../lib/glitch-effects';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { applyGlitchEffect } from '@/lib/glitch-effects';
 import { useAccount } from 'wagmi';
-import { shareToWarpcast, shareToBase } from '../lib/social-share';
-import { useQuickAuth } from '../hooks/useQuickAuth';
-import { useIsInFarcaster } from '../hooks/useIsInFarcaster';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../../components/ui';
-import { Button as UIButton } from '../../components/ui';
+import { shareToWarpcast, shareToBase } from '@/lib/social-share';
+import { useQuickAuth } from '@/hooks/useQuickAuth';
+import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui';
+import { Button as UIButton } from '@/components/ui';
 import { RefreshCw, Download } from 'lucide-react';
-import { WalletConnectButton } from '../../components/wallet-connect-button';
+import { WalletConnectButton } from '@/components/wallet-connect-button';
 
 
 export default function GlitchStudio() {
