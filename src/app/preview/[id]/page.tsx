@@ -13,7 +13,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   // Use the blob URL from query params if available, otherwise construct it
   // The blob URL should be passed from the upload endpoint
   const blobUrl = blobUrlParam || `https://${process.env.BLOB_READ_WRITE_TOKEN?.split('_')[1]}.public.blob.vercel-storage.com/${id}`;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://push-entirely-836.app.ohara.ai';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'stackblitz-kamelen-teen.vercel.app';
 
   return {
     title: 'Glitch Art - Created with Glitch Editor',
@@ -54,7 +54,7 @@ export default async function PreviewPage({ params, searchParams }: Props) {
   
   // Use the blob URL from query params if available, otherwise construct it
   const blobUrl = blobUrlParam || `https://${process.env.BLOB_READ_WRITE_TOKEN?.split('_')[1]}.public.blob.vercel-storage.com/${id}`;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://push-entirely-836.app.ohara.ai';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'stackblitz-kamelen-teen.vercel.app';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">

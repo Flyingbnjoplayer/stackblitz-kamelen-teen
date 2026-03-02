@@ -8,7 +8,7 @@
     "name": "Glitch NFT Studio",
     "description": "Create glitch art and mint as NFTs on Base",
     "icon": "https://push-entirely-836.app.ohara.ai/favicon.ico",
-    "url": "https://push-entirely-836.app.ohara.ai"
+    "url": "stackblitz-kamelen-teen.vercel.app"
   },
   "frame": {
     "version": "next",
@@ -18,7 +18,7 @@
       "action": {
         "type": "launch_frame",
         "name": "Glitch NFT Studio",
-        "url": "https://push-entirely-836.app.ohara.ai",
+        "url": "stackblitz-kamelen-teen.vercel.app",
         "splashImageUrl": "https://push-entirely-836.app.ohara.ai/splash.png",
         "splashBackgroundColor": "#000000"
       }

@@ -1,4 +1,4 @@
-// src/app/components/glitch-studio.tsx
+// src/app//glitch-studio.tsx
 'use client';
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';

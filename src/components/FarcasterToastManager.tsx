@@ -84,7 +84,7 @@ export default function FarcasterToastManager({
       })();
 
       toast.success('Manifest Signed Successfully! 🎉', {
-        description: 'Domain: push-entirely-836.app.ohara.ai',
+        description: 'Domain: https://stackblitz-kamelen-teen.vercel.app/',
         duration: 3000,
       });
 
@@ -111,7 +111,7 @@ export default function FarcasterToastManager({
                 <button
                   onClick={() => {
                     window.open(
-                      'https://ohara.ai/mini-apps/ae1d2f16-cffb-450f-a2fa-1e4a267b3737/build',
+                      'stackblitz-kamelen-teen-5h8hzrty2-tristan-a-de-jongs-projects.vercel.app',
                       '_blank',
                     );
                   }}

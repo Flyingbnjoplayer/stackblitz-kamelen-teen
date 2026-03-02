@@ -17,7 +17,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const payload = await client.verifyJwt({
       token,
-      domain: process.env.NEXT_PUBLIC_HOST || 'push-entirely-836.app.ohara.ai',
+      domain: process.env.NEXT_PUBLIC_HOST || 'stackblitz-kamelen-teen.vercel.app',
     })
 
     const userResponse = await fetch(

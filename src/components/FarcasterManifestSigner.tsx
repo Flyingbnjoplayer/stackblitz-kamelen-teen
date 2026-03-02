@@ -18,7 +18,7 @@ interface FarcasterAutoManifestSignerProps {
 }
 
 export default function FarcasterManifestSigner({
-  domain = 'push-entirely-836.app.ohara.ai',
+  domain = 'stackblitz-kamelen-teen.vercel.app',
   onSuccess,
   onError,
 }: FarcasterAutoManifestSignerProps): React.JSX.Element | null {
