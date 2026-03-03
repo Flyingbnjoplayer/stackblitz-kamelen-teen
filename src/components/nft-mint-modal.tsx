@@ -1,15 +1,8 @@
-import Image from 'next/image';
-import Image from 'next/image';
-import Image from 'next/image';
-import Image from 'next/image';
 //stackblitz-kamelen-teen/src/components/nft-mint-modal.tsx
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
-import Image from 'next/image';
 import { useAccount } from 'wagmi';
-import Image from 'next/image';
 import {
   Dialog,
   DialogContent,
@@ -18,15 +11,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
 import { Input } from '@/components/ui/input';
-import Image from 'next/image';
 import { Label } from '@/components/ui/label';
-import Image from 'next/image';
 import { toast } from 'sonner';
-import Image from 'next/image';
 import { Loader2, Sparkles } from 'lucide-react';
 
 export type NFTMintModalProps = {
