@@ -1,5 +1,6 @@
 //stackblitz-kamelen-teen/src/components/nft-mint-modal.tsx
 'use client';
+import Image from 'next/image';
 
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
