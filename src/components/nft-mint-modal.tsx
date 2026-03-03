@@ -1,8 +1,15 @@
+import Image from 'next/image';
+import Image from 'next/image';
+import Image from 'next/image';
+import Image from 'next/image';
 //stackblitz-kamelen-teen/src/components/nft-mint-modal.tsx
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
+import Image from 'next/image';
 import { useAccount } from 'wagmi';
+import Image from 'next/image';
 import {
   Dialog,
   DialogContent,
@@ -11,10 +18,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import { Input } from '@/components/ui/input';
+import Image from 'next/image';
 import { Label } from '@/components/ui/label';
+import Image from 'next/image';
 import { toast } from 'sonner';
+import Image from 'next/image';
 import { Loader2, Sparkles } from 'lucide-react';
 
 export type NFTMintModalProps = {
@@ -152,7 +164,7 @@ export function NFTMintModal({
         <div className="space-y-4 py-4 overflow-y-auto flex-1 min-h-0">
           {/* Preview */}
           <div className="rounded-lg overflow-hidden border-2 border-purple-400/30 bg-black/20">
-            <img src={imageUrl} alt="Glitch art preview" className="w-full h-auto" />
+            <Image src={imageUrl} alt="Glitch art preview" className="w-full h-auto" width={500} height={500} unoptimized />
           </div>
 
           {/* NFT Name */}

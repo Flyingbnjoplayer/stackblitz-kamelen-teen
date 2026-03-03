@@ -1,5 +1,12 @@
+import Image from 'next/image';
+import Image from 'next/image';
+import Image from 'next/image';
+import Image from 'next/image';
+import Image from 'next/image';
 import { sdk } from '@farcaster/miniapp-sdk'
+import Image from 'next/image';
 import { useEffect, useRef } from 'react'
+import Image from 'next/image';
 import { toast } from 'sonner'
 
 interface UserData {
@@ -35,6 +42,9 @@ export function useQuickAuth(isInFarcaster: boolean){
                       src={userData.pfpUrl} 
                       alt="Profile" 
                       className="w-12 h-12 rounded-full border-2 border-black"
+                      width={48}
+                      height={48}
+                      unoptimized
                     />
                   )}
                   <div>

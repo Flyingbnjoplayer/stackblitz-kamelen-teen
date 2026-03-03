@@ -1,22 +1,41 @@
+import Image from 'next/image';
+import Image from 'next/image';
 // src/app//glitch-studio.tsx
 'use client';
 
+import Image from 'next/image';
+import Image from 'next/image';
+import Image from 'next/image';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 // ... rest of your page.tsx content (without 'use client' at top)
 
+import Image from 'next/image';
 import { Upload, Sliders, Zap } from 'lucide-react';
+import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import { Slider } from '@/components/ui/slider';
+import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Image from 'next/image';
 import { applyGlitchEffect } from '@/lib/glitch-effects';
+import Image from 'next/image';
 import { useAccount } from 'wagmi';
+import Image from 'next/image';
 import { shareToWarpcast, shareToBase } from '@/lib/social-share';
+import Image from 'next/image';
 import { useQuickAuth } from '@/hooks/useQuickAuth';
+import Image from 'next/image';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
+import Image from 'next/image';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui';
+import Image from 'next/image';
 import { Button as UIButton } from '@/components/ui';
+import Image from 'next/image';
 import { RefreshCw, Download } from 'lucide-react';
+import Image from 'next/image';
 import { WalletConnectButton } from '@/components/wallet-connect-button';
 
 
@@ -161,7 +180,7 @@ export default function GlitchStudio() {
                 onClick={() => fileInputRef.current?.click()}
               >
                 {selectedImage ? (
-                  <img src={selectedImage} alt="Selected" className="max-w-full h-auto mx-auto rounded" />
+                  <Image src={selectedImage} alt="Selected" className="max-w-full h-auto mx-auto rounded" width={500} height={500} unoptimized />
                 ) : (
                   <div className="flex flex-col items-center gap-4">
                     <Upload className="w-16 h-16 text-purple-500" />
@@ -184,7 +203,7 @@ export default function GlitchStudio() {
             <CardContent className="p-6">
               <div className="border-2 border-blue-500 rounded-lg p-8 min-h-[300px] flex items-center justify-center">
                 {editedImage ? (
-                  <img src={editedImage} alt="Glitched" className="max-w-full h-auto rounded" />
+                  <Image src={editedImage} alt="Glitched" className="max-w-full h-auto rounded" width={500} height={500} unoptimized />
                 ) : (
                   <div className="text-center text-gray-500">
                     <Zap className="w-16 h-16 mx-auto mb-4" />
