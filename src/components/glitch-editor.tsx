@@ -121,7 +121,7 @@ export function GlitchEditor({ effectStates, onImageProcessed, onImageLoaded, re
       }
 
       console.log('FileReader loaded, creating image element');
-      const img = new Image();
+      const img = document.createElement('img');
       img.onload = (): void => {
         console.log('Image loaded successfully:', img.width, 'x', img.height);
         const canvas = canvasRef.current;
