@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import "@coinbase/onchainkit/styles.css";
 import { ResponseLogger } from "../components/response-logger";
 import { ReadyNotifier } from "../components/ready-notifier";
 import { Providers } from "./providers";
