@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "@coinbase/onchainkit/styles.css";
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -68,5 +70,3 @@
   }
 
 }
-
-@import "@coinbase/onchainkit/styles.css";
