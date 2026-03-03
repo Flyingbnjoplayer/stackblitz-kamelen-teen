@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+   turbopack: {}, // Add this to silence the error
   /*eslint: {
     // Disable ESLint during builds to avoid circular reference error
     // Type checking is still enforced

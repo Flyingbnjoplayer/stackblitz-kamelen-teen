@@ -7,19 +7,19 @@
   "baseBuilder": {
     "name": "Glitch NFT Studio",
     "description": "Create glitch art and mint as NFTs on Base",
-    "icon": "https://push-entirely-836.app.ohara.ai/favicon.ico",
-    "url": "stackblitz-kamelen-teen.vercel.app"
+    "icon": "https://stackblitz-kamelen-teen.vercel.app/favicon.ico",
+    "url": "https://stackblitz-kamelen-teen.vercel.app"
   },
   "frame": {
     "version": "next",
-    "imageUrl": "https://push-entirely-836.app.ohara.ai/og-image.png",
+    "imageUrl": "https://stackblitz-kamelen-teen.vercel.app/og-image.png",
     "button": {
       "title": "Open Glitch NFT Studio",
       "action": {
         "type": "launch_frame",
         "name": "Glitch NFT Studio",
-        "url": "stackblitz-kamelen-teen.vercel.app",
-        "splashImageUrl": "https://push-entirely-836.app.ohara.ai/splash.png",
+        "url": "https://stackblitz-kamelen-teen.vercel.app",
+        "splashImageUrl": "https://stackblitz-kamelen-teen.vercel.app/splash.png",
         "splashBackgroundColor": "#000000"
       }
     }
