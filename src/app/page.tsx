@@ -1,5 +1,3 @@
-import GlitchStudio from './glitch-studio';
-
 export default function Home() {
-  return <GlitchStudio />;
+  return <div>Hello World</div>;
 }
