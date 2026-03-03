@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "@coinbase/onchainkit/styles.css";
 import { ResponseLogger } from "../components/response-logger";
@@ -9,15 +9,14 @@ import FarcasterWrapper from "../components/FarcasterWrapper";
 import { Toaster } from "../components/ui/sonner";
 
 const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
-
 export const metadata: Metadata = {
   title: "Glitch NFT Studio",
   description: "Create, mint, and share retro glitch art as NFTs on Base. Real-time effects including RGB split, VHS distortion, and more. Mint your creations and share on Warpcast.",
