@@ -1,22 +1,11 @@
 import Image from 'next/image';
-import Image from 'next/image';
-import Image from 'next/image';
-import Image from 'next/image';
-import Image from 'next/image';
-import Image from 'next/image';
 'use client';
 
-import Image from 'next/image';
 import { useRef, useEffect, useState, useCallback } from 'react';
-import Image from 'next/image';
 import { glitchEffects } from '@/lib/glitch-effects';
-import Image from 'next/image';
 import { Button } from './ui/button';
-import Image from 'next/image';
 import { Upload, Camera, Check, X } from 'lucide-react';
-import Image from 'next/image';
 import { CameraModal } from './camera-modal';
-import Image from 'next/image';
 import type { EffectState } from './glitch-controls';
 
 export type GlitchEditorProps = {
@@ -270,13 +259,13 @@ export function GlitchEditor({ effectStates, onImageProcessed, onImageLoaded, re
               </div>
             ) : previewUrl ? (
               <div className="w-full h-full flex flex-col items-center justify-center p-4 space-y-4">
-                <img 
+                <Image
                   src={previewUrl}
+                  alt="Preview"
+                  className="max-w-full max-h-[60%] object-contain rounded-lg"
                   width={500}
                   height={500}
-                  unoptimized 
-                  alt="Preview" 
-                  className="max-w-full max-h-[60%] object-contain rounded-lg"
+                  unoptimized
                 />
                 <div className="text-center space-y-4">
                   <p className="text-white text-lg font-semibold">

@@ -1,41 +1,23 @@
 import Image from 'next/image';
-import Image from 'next/image';
 // src/app//glitch-studio.tsx
 'use client';
 
-import Image from 'next/image';
-import Image from 'next/image';
-import Image from 'next/image';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 // ... rest of your page.tsx content (without 'use client' at top)
 
-import Image from 'next/image';
 import { Upload, Sliders, Zap } from 'lucide-react';
-import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
 import { Slider } from '@/components/ui/slider';
-import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Image from 'next/image';
 import { applyGlitchEffect } from '@/lib/glitch-effects';
-import Image from 'next/image';
 import { useAccount } from 'wagmi';
-import Image from 'next/image';
 import { shareToWarpcast, shareToBase } from '@/lib/social-share';
-import Image from 'next/image';
 import { useQuickAuth } from '@/hooks/useQuickAuth';
-import Image from 'next/image';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
-import Image from 'next/image';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui';
-import Image from 'next/image';
 import { Button as UIButton } from '@/components/ui';
-import Image from 'next/image';
 import { RefreshCw, Download } from 'lucide-react';
-import Image from 'next/image';
 import { WalletConnectButton } from '@/components/wallet-connect-button';
 
 
