@@ -1,22 +1,21 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "@coinbase/onchainkit/styles.css";
+import { Geist, Geist_Mono } from 'next/font/google';
 import "./globals.css";
+import "@coinbase/onchainkit/styles.css";
 import { ResponseLogger } from "../components/response-logger";
 import { ReadyNotifier } from "../components/ready-notifier";
 import { Providers } from "./providers";
 import FarcasterWrapper from "../components/FarcasterWrapper";
 import { Toaster } from "../components/ui/sonner";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
