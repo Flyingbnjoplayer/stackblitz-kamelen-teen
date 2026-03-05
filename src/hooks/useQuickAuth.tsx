@@ -1,6 +1,7 @@
 import { sdk } from '@farcaster/miniapp-sdk'
 import { useEffect, useRef } from 'react'
 import { toast } from 'sonner'
+import Image from 'next/image';
 
 interface UserData {
   fid: number
