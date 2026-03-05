@@ -25,7 +25,7 @@ export default function GlitchStudio() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [editedImage, setEditedImage] = useState<string | null>(null);
   const [glitchIntensity, setGlitchIntensity] = useState(50);
-  const [effectType, setEffectType] = useState<'scanlines' | 'chromatic' | 'pixelate' | 'rgb-shift'>('scanlines');
+  const [effectType, setEffectType] = useState<'scanLines' | 'chromaticAberration' | 'rgbSplit' | 'vhsDistortion'>('scanLines');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isMinting, setIsMinting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -209,10 +209,10 @@ export default function GlitchStudio() {
 
               <Tabs value={effectType} onValueChange={(value) => setEffectType(value as any)}>
                 <TabsList className="grid w-full grid-cols-4 mb-6">
-                  <TabsTrigger value="scanlines">Scanlines</TabsTrigger>
-                  <TabsTrigger value="chromatic">Chromatic</TabsTrigger>
-                  <TabsTrigger value="pixelate">Pixelate</TabsTrigger>
-                  <TabsTrigger value="rgb-shift">RGB Shift</TabsTrigger>
+                  <TabsTrigger value="scanLines">Scanlines</TabsTrigger>
+                  <TabsTrigger value="chromaticAberration">Chromatic</TabsTrigger>
+                  <TabsTrigger value="rgbSplit">RGB Split</TabsTrigger>
+                  <TabsTrigger value="vhsDistortion">VHS</TabsTrigger>
                 </TabsList>
               </Tabs>
 
