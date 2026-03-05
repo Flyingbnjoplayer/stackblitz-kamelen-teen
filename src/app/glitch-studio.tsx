@@ -6,7 +6,7 @@ import { GlitchControls, type EffectState } from '@/components/glitch-controls';
 import { WalletConnectButton } from '@/components/wallet-connect-button';
 import { WalletInfoPanel } from '@/components/wallet-info-panel';
 import { ShareButtons } from '@/components/share-buttons';
-import { NftMintModal } from '@/components/nft-mint-modal';
+import { NFTMintModal } from '@/components/nft-mint-modal';
 import { useAccount } from 'wagmi';
 import { useQuickAuth } from '@/hooks/useQuickAuth';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
@@ -118,7 +118,7 @@ export default function GlitchStudio() {
                 <>
                   <WalletInfoPanel address={connectedAddress} />
                   {editedImage && (
-                    <NftMintModal
+                    <NFTMintModal
                       editedImage={editedImage}
                       walletAddress={connectedAddress}
                     />
