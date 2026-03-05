@@ -116,7 +116,7 @@ export default function GlitchStudio() {
               <WalletConnectButton />
               {isConnected && connectedAddress && (
                 <>
-                  <WalletInfoPanel address={connectedAddress} />
+                  <WalletInfoPanel />
                   {editedImage && (
                     <NFTMintModal
                       editedImage={editedImage}
