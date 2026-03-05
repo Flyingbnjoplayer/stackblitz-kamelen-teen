@@ -1,6 +1,6 @@
-import Image from 'next/image';
 // src/app//glitch-studio.tsx
 'use client';
+import Image from 'next/image';
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 // ... rest of your page.tsx content (without 'use client' at top)
