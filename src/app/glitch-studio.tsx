@@ -108,7 +108,7 @@ export default function GlitchStudio() {
 
             {/* Share Buttons */}
             {editedImage && (
-              <ShareButtons editedImage={editedImage} />
+              <ShareButtons imageDataUrl={editedImage} />
             )}
 
             {/* Wallet & Mint */}
