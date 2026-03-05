@@ -10,7 +10,7 @@ import { NFTMintModal } from '@/components/nft-mint-modal';
 import { useAccount } from 'wagmi';
 import { useQuickAuth } from '@/hooks/useQuickAuth';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
-import { Download, RotateCcw } from 'lucide-react';
+import { Download, RotateCcw, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const defaultEffects: EffectState = {
@@ -29,8 +29,9 @@ export default function GlitchStudio() {
   const [effectStates, setEffectStates] = useState<EffectState>(defaultEffects);
   const [resetTrigger, setResetTrigger] = useState(0);
   const [hasImage, setHasImage] = useState(false);
+  const [isMintModalOpen, setIsMintModalOpen] = useState(false);
 
-  const { address: connectedAddress, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const isInFarcaster = useIsInFarcaster();
   useQuickAuth(isInFarcaster);
 
@@ -103,6 +104,15 @@ export default function GlitchStudio() {
                   <RotateCcw className="w-4 h-4 mr-2" />
                   Reset
                 </Button>
+                {isConnected && (
+                  <Button
+                    onClick={() => setIsMintModalOpen(true)}
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Mint NFT
+                  </Button>
+                )}
               </div>
             )}
 
@@ -111,20 +121,10 @@ export default function GlitchStudio() {
               <ShareButtons imageDataUrl={editedImage} />
             )}
 
-            {/* Wallet & Mint */}
+            {/* Wallet */}
             <div className="space-y-4">
               <WalletConnectButton />
-              {isConnected && connectedAddress && (
-                <>
-                  <WalletInfoPanel />
-                  {editedImage && (
-                    <NFTMintModal
-                      editedImage={editedImage}
-                      walletAddress={connectedAddress}
-                    />
-                  )}
-                </>
-              )}
+              <WalletInfoPanel />
             </div>
           </div>
 
@@ -142,6 +142,15 @@ export default function GlitchStudio() {
           <p>Built on Base • Powered by Farcaster</p>
         </footer>
       </div>
+
+      {/* NFT Mint Modal */}
+      {editedImage && (
+        <NFTMintModal
+          isOpen={isMintModalOpen}
+          onClose={() => setIsMintModalOpen(false)}
+          imageUrl={editedImage}
+        />
+      )}
     </div>
   );
 }
