@@ -1,19 +1,16 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^^.8.24;
+pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 
 /**
  * @title GlitchNFT
  * @dev ERC-721 contract for minting glitch art NFTs on Base
  */
 contract GlitchNFT is ERC721, ERC721URIStorage, Ownable {
-    using Counters for Counters.Counter;
-
-    Counters.Counter private _tokenIdCounter;
+    uint256 private _nextTokenId;
 
     // Mapping from tokenId to creator address
     mapping(uint256 => address) public creators;
@@ -36,8 +33,7 @@ contract GlitchNFT is ERC721, ERC721URIStorage, Ownable {
      * @return tokenId The ID of the minted token
      */
     function safeMint(address to, string memory uri) public returns (uint256) {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+        uint256 tokenId = _nextTokenId++;
 
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
@@ -64,7 +60,7 @@ contract GlitchNFT is ERC721, ERC721URIStorage, Ownable {
      * @dev Get total supply of minted tokens
      */
     function totalSupply() public view returns (uint256) {
-        return _tokenIdCounter.current();
+        return _nextTokenId;
     }
 
     /**
@@ -77,8 +73,8 @@ contract GlitchNFT is ERC721, ERC721URIStorage, Ownable {
         uint256[] memory tokenIds = new uint256[](balance);
         uint256 index = 0;
 
-        for (uint256 i = 0; i < _tokenIdCounter.current(); i++) {
-            if (ownerOf(i) == owner) {
+        for (uint256 i = 0; i < _nextTokenId; i++) {
+            if (_ownerOf(i) == owner) {
                 tokenIds[index] = i;
                 index++;
             }
