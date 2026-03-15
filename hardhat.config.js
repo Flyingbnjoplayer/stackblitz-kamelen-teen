@@ -1,10 +1,10 @@
-import { HardhatUserConfig } from 'hardhat/config';
 import '@nomicfoundation/hardhat-toolbox';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const config = {
+/** @type {import('hardhat/config').HardhatUserConfig} */
+export default {
   solidity: {
     version: '0.8.24',
     settings: {
@@ -49,5 +49,3 @@ const config = {
     ],
   },
 };
-
-export default config;
