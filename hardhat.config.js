@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const config: HardhatUserConfig = {
+const config = {
   solidity: {
     version: '0.8.24',
     settings: {
@@ -15,12 +15,10 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
-    // Base Sepolia testnet (test first!)
     baseSepolia: {
       url: process.env.ALCHEMY_BASE_SEPOLIA_HTTP || 'https://sepolia.base.org',
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
-    // Base mainnet
     base: {
       url: process.env.ALCHEMY_BASE_MAINNET_HTTP || 'https://mainnet.base.org',
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
