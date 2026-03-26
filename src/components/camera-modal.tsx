@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Button } from './ui/button';
-import { Camera, X, SwitchCamera } from 'lucide-react';
+import { X, SwitchCamera } from 'lucide-react';
 
 export type CameraModalProps = {
   isOpen: boolean;
@@ -15,6 +15,7 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
   const lastTapTimeRef = useRef<number>(0);
 
@@ -22,12 +23,14 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
     if (stream) {
       stream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
       setStream(null);
+      setIsReady(false);
     }
   }, [stream]);
 
   const startCamera = useCallback(async (): Promise<void> => {
     try {
       setError(null);
+      setIsReady(false);
       console.log('Starting camera with facing mode:', facingMode);
 
       // Stop existing stream before starting new one
@@ -50,11 +53,21 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
         await videoRef.current.play();
-        console.log('Video element playing, dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+        console.log('Video element playing');
       }
     } catch (err) {
       console.error('Camera access error:', err);
-      setError('Could not access camera. Please check permissions.');
+      if (err instanceof Error) {
+        if (err.name === 'NotAllowedError') {
+          setError('Camera permission denied. Please allow camera access in your browser settings.');
+        } else if (err.name === 'NotFoundError') {
+          setError('No camera found. Please connect a camera and try again.');
+        } else {
+          setError(`Could not access camera: ${err.message}`);
+        }
+      } else {
+        setError('Could not access camera. Please check permissions.');
+      }
     }
   }, [facingMode, stream]);
 
@@ -70,17 +83,25 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
     };
   }, [isOpen, facingMode, startCamera, stopCamera]);
 
+  // Track when video is ready
+  const handleVideoReady = useCallback(() => {
+    if (videoRef.current && videoRef.current.videoWidth > 0) {
+      console.log('Video ready, dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+      setIsReady(true);
+    }
+  }, []);
+
   const capturePhoto = async (): Promise<void> => {
-    console.log('Capture button/double-tap triggered');
-    if (!videoRef.current) {
-      console.error('Video ref not available');
+    console.log('Capture triggered');
+    
+    if (!videoRef.current || !isReady) {
+      console.error('Video not ready');
+      setError('Camera not ready. Please wait a moment and try again.');
       return;
     }
 
-    console.log('Video dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
-
     if (videoRef.current.videoWidth === 0 || videoRef.current.videoHeight === 0) {
-      console.error('Video not ready - dimensions are 0');
+      console.error('Video dimensions are 0');
       setError('Camera not ready. Please wait a moment and try again.');
       return;
     }
@@ -102,7 +123,6 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
       console.log('Drawing image to canvas');
       ctx.drawImage(videoRef.current, 0, 0);
 
-      // Convert to blob using Promise wrapper for better control
       const blob = await new Promise<Blob | null>((resolve) => {
         canvas.toBlob(resolve, 'image/png');
       });
@@ -111,11 +131,9 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
         console.log('Photo captured successfully, blob size:', blob.size);
         const file = new File([blob], `camera-${Date.now()}.png`, { type: 'image/png' });
 
-        // Call onCapture and wait a bit to ensure state updates
         console.log('Passing file to editor...');
         onCapture(file);
 
-        // Small delay to ensure file is passed before closing
         await new Promise(resolve => setTimeout(resolve, 100));
 
         console.log('Closing camera modal');
@@ -141,15 +159,11 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
     const now = Date.now();
     const timeSinceLastTap = now - lastTapTimeRef.current;
 
-    console.log('Video tapped, time since last tap:', timeSinceLastTap);
-
-    // Double-tap detected (within 300ms)
     if (timeSinceLastTap < 300 && timeSinceLastTap > 0) {
       console.log('Double-tap detected, capturing photo');
       capturePhoto();
-      lastTapTimeRef.current = 0; // Reset to prevent triple-tap
+      lastTapTimeRef.current = 0;
     } else {
-      console.log('First tap recorded');
       lastTapTimeRef.current = now;
     }
   };
@@ -159,7 +173,7 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
       <div className="relative w-full h-full bg-black">
-        {/* Top controls - Close and Flip buttons */}
+        {/* Top controls */}
         <div className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-4 bg-gradient-to-b from-black/80 to-transparent">
           <Button
             onClick={toggleCamera}
@@ -183,7 +197,7 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
           </button>
         </div>
 
-        {/* Camera preview - Full screen */}
+        {/* Camera preview */}
         <div className="absolute inset-0">
           {error ? (
             <div className="absolute inset-0 flex items-center justify-center p-4 bg-black">
@@ -195,6 +209,7 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
               autoPlay
               playsInline
               muted
+              onLoadedData={handleVideoReady}
               onTouchEnd={handleVideoTap}
               onClick={handleVideoTap}
               className="w-full h-full object-cover cursor-pointer"
@@ -202,13 +217,24 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
           )}
         </div>
 
-        {/* Info text at bottom - double-tap to capture */}
+        {/* Loading indicator */}
+        {stream && !isReady && !error && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+            <div className="text-white text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mx-auto mb-4"></div>
+              <p>Starting camera...</p>
+            </div>
+          </div>
+        )}
+
+        {/* Bottom info */}
         <div className="absolute bottom-0 left-0 right-0 z-20 flex justify-center items-center p-8 bg-gradient-to-t from-black/80 to-transparent pointer-events-none">
           <div className="bg-purple-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-full shadow-lg">
-            <p className="text-sm font-medium">Double-tap to capture</p>
+            <p className="text-sm font-medium">
+              {isReady ? 'Double-tap to capture' : 'Initializing camera...'}
+            </p>
           </div>
         </div>
-
       </div>
     </div>
   );
