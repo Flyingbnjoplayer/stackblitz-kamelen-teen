@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 import { Loader2, Sparkles, ExternalLink } from 'lucide-react';
 import { NFT_CONTRACT_ADDRESS, GLITCH_NFT_ABI } from '@/lib/nft-minting';
 import { baseSepolia } from 'viem/chains';
-import { useState, useEffect } from 'react';
+
 
 export type NFTMintModalProps = {
   isOpen: boolean;
