@@ -214,15 +214,17 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareB
   return (
     <>
       <div className="space-y-3 w-full">
-        {/* Mint as NFT button */}
-        <Button
-          onClick={() => setIsMintModalOpen(true)}
-          disabled={isSharing || !imageDataUrl}
-          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold shadow-lg text-base py-6 border-2 border-white/20"
-        >
+        {/* Mint as NFT button - only show when wallet connected */}
+{address && (
+  <Button
+    onClick={() => setIsMintModalOpen(true)}    
+    disabled={isSharing || !imageDataUrl}       
+    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold shadow-lg text-base py-6 border-2 border-white/20"
+  >
           <Sparkles className="w-5 h-5 mr-2" />
           <span className="font-bold text-white">Mint as NFT</span>
         </Button>
+)}
 
         {/* Share on Based button */}
         <Button

@@ -9,7 +9,7 @@ import { ShareButtons } from '@/components/share-buttons';
 import { useAccount } from 'wagmi';
 import { useQuickAuth } from '@/hooks/useQuickAuth';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
-import { Download, RotateCcw, Sparkles } from 'lucide-react';
+import { Download, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const defaultEffects: EffectState = {
@@ -28,7 +28,6 @@ export default function GlitchStudio() {
   const [effectStates, setEffectStates] = useState<EffectState>(defaultEffects);
   const [resetTrigger, setResetTrigger] = useState(0);
   const [hasImage, setHasImage] = useState(false);
-  
 
   const { isConnected } = useAccount();
   const isInFarcaster = useIsInFarcaster();
@@ -85,28 +84,28 @@ export default function GlitchStudio() {
               resetTrigger={resetTrigger}
             />
 
-           {/* Action Buttons */}
-{hasImage && editedImage && (
-  <div className="flex flex-wrap gap-3 justify-center">
-    <Button
-      onClick={handleDownload}
-      className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
-    >
-      <Download className="w-4 h-4 mr-2" />
-      Download
-    </Button>
-    <Button
-      onClick={handleReset}
-      variant="outline"
-      className="border-black text-black hover:bg-black/10"
-    >
-      <RotateCcw className="w-4 h-4 mr-2" />
-      Reset
-    </Button>
-  </div>
-)}
+            {/* Action Buttons */}
+            {hasImage && editedImage && (
+              <div className="flex flex-wrap gap-3 justify-center">
+                <Button
+                  onClick={handleDownload}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download
+                </Button>
+                <Button
+                  onClick={handleReset}
+                  variant="outline"
+                  className="border-black text-black hover:bg-black/10 bg-white"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Reset
+                </Button>
+              </div>
+            )}
 
-            {/* Share Buttons */}
+            {/* Share Buttons (includes Mint button) */}
             {editedImage && (
               <ShareButtons imageDataUrl={editedImage} />
             )}
@@ -132,8 +131,6 @@ export default function GlitchStudio() {
           <p>Built on Base • Powered by Farcaster</p>
         </footer>
       </div>
-
-      
     </div>
   );
 }
