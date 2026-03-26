@@ -202,7 +202,7 @@ export function NFTMintModal({
           )}
         </div>
 
-        <DialogFooter className="gap-2 flex-shrink-0 pt-4 border-t border-white/10 sticky bottom-0 bg-gradient-to-br from-blue-900 to-purple-900">
+        <DialogFooter className="gap-2 flex-shrink-0 pt-4 border-t border-white/10 bg-gradient-to-br from-blue-900 to-purple-900">
           <Button
             type="button"
             variant="outline"

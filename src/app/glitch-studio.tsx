@@ -6,7 +6,6 @@ import { GlitchControls, type EffectState } from '@/components/glitch-controls';
 import { WalletConnectButton } from '@/components/wallet-connect-button';
 import { WalletInfoPanel } from '@/components/wallet-info-panel';
 import { ShareButtons } from '@/components/share-buttons';
-import { NFTMintModal } from '@/components/nft-mint-modal';
 import { useAccount } from 'wagmi';
 import { useQuickAuth } from '@/hooks/useQuickAuth';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
@@ -29,7 +28,7 @@ export default function GlitchStudio() {
   const [effectStates, setEffectStates] = useState<EffectState>(defaultEffects);
   const [resetTrigger, setResetTrigger] = useState(0);
   const [hasImage, setHasImage] = useState(false);
-  const [isMintModalOpen, setIsMintModalOpen] = useState(false);
+  
 
   const { isConnected } = useAccount();
   const isInFarcaster = useIsInFarcaster();
@@ -86,35 +85,26 @@ export default function GlitchStudio() {
               resetTrigger={resetTrigger}
             />
 
-            {/* Action Buttons */}
-            {hasImage && editedImage && (
-              <div className="flex flex-wrap gap-3 justify-center">
-                <Button
-                  onClick={handleDownload}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
-                <Button
-                  onClick={handleReset}
-                  variant="outline"
-                  className="border-white/30 hover:bg-white/10"
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Reset
-                </Button>
-                {isConnected && (
-                  <Button
-                    onClick={() => setIsMintModalOpen(true)}
-                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold"
-                  >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Mint NFT
-                  </Button>
-                )}
-              </div>
-            )}
+           {/* Action Buttons */}
+{hasImage && editedImage && (
+  <div className="flex flex-wrap gap-3 justify-center">
+    <Button
+      onClick={handleDownload}
+      className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
+    >
+      <Download className="w-4 h-4 mr-2" />
+      Download
+    </Button>
+    <Button
+      onClick={handleReset}
+      variant="outline"
+      className="border-black text-black hover:bg-black/10"
+    >
+      <RotateCcw className="w-4 h-4 mr-2" />
+      Reset
+    </Button>
+  </div>
+)}
 
             {/* Share Buttons */}
             {editedImage && (
@@ -143,14 +133,7 @@ export default function GlitchStudio() {
         </footer>
       </div>
 
-      {/* NFT Mint Modal */}
-      {editedImage && (
-        <NFTMintModal
-          isOpen={isMintModalOpen}
-          onClose={() => setIsMintModalOpen(false)}
-          imageUrl={editedImage}
-        />
-      )}
+      
     </div>
   );
 }
