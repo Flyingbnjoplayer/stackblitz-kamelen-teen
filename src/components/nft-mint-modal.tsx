@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { Loader2, Sparkles, ExternalLink } from 'lucide-react';
 import { NFT_CONTRACT_ADDRESS, GLITCH_NFT_ABI } from '@/lib/nft-minting';
 import { baseSepolia } from 'viem/chains';
+import { useState, useEffect } from 'react';
 
 export type NFTMintModalProps = {
   isOpen: boolean;
@@ -45,23 +46,25 @@ export function NFTMintModal({
   });
 
   // Reset state when modal opens
-  useState(() => {
-    if (isOpen) {
-      setNftName('');
-      setNftDescription('');
-      setMetadataUri(null);
-      setTxHash(null);
-    }
-  });
+useEffect(() => {
+  if (isOpen) {
+    setNftName('');
+    setNftDescription('');
+    setMetadataUri(null);
+    setTxHash(null);
+  }
+}, [isOpen]);
 
-  // Handle successful confirmation
-  useState(() => {
-    if (isConfirmed && txHash) {
-      toast.success('NFT minted successfully!', { id: 'mint-toast' });
-      if (onMintSuccess) onMintSuccess();
+// Handle successful confirmation
+useEffect(() => {
+  if (isConfirmed && txHash) {
+    toast.success('NFT minted successfully!', { id: 'mint-toast' });
+    if (onMintSuccess) onMintSuccess();
+    setTimeout(() => {
       onClose();
-    }
-  });
+    }, 1500);
+  }
+}, [isConfirmed, txHash, onMintSuccess, onClose]);
 
   const handleUpload = async (): Promise<string | null> => {
     if (!nftName.trim()) {
