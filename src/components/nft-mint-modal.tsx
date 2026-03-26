@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import {
   Dialog,
@@ -18,7 +18,6 @@ import { toast } from 'sonner';
 import { Loader2, Sparkles, ExternalLink } from 'lucide-react';
 import { NFT_CONTRACT_ADDRESS, GLITCH_NFT_ABI } from '@/lib/nft-minting';
 import { baseSepolia } from 'viem/chains';
-
 
 export type NFTMintModalProps = {
   isOpen: boolean;
@@ -46,25 +45,25 @@ export function NFTMintModal({
   });
 
   // Reset state when modal opens
-useEffect(() => {
-  if (isOpen) {
-    setNftName('');
-    setNftDescription('');
-    setMetadataUri(null);
-    setTxHash(null);
-  }
-}, [isOpen]);
+  useEffect(() => {
+    if (isOpen) {
+      setNftName('');
+      setNftDescription('');
+      setMetadataUri(null);
+      setTxHash(null);
+    }
+  }, [isOpen]);
 
-// Handle successful confirmation
-useEffect(() => {
-  if (isConfirmed && txHash) {
-    toast.success('NFT minted successfully!', { id: 'mint-toast' });
-    if (onMintSuccess) onMintSuccess();
-    setTimeout(() => {
-      onClose();
-    }, 1500);
-  }
-}, [isConfirmed, txHash, onMintSuccess, onClose]);
+  // Handle successful confirmation
+  useEffect(() => {
+    if (isConfirmed && txHash) {
+      toast.success('NFT minted successfully!', { id: 'mint-toast' });
+      if (onMintSuccess) onMintSuccess();
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    }
+  }, [isConfirmed, txHash, onMintSuccess, onClose]);
 
   const handleUpload = async (): Promise<string | null> => {
     if (!nftName.trim()) {
@@ -211,14 +210,14 @@ useEffect(() => {
           {/* Wallet Status */}
           {!isConnected && (
             <div className="p-3 bg-yellow-500/20 border border-yellow-400/50 rounded-lg">
-              <p className="text-sm text-yellow-100">⚠️ Please connect your wallet to mint NFTs</p>
+              <p className="text-sm text-yellow-100">Please connect your wallet to mint NFTs</p>
             </div>
           )}
 
           {isConnected && address && (
             <div className="p-3 bg-green-500/20 border border-green-400/50 rounded-lg">
               <p className="text-sm text-green-100">
-                ✅ Connected: {address.slice(0, 6)}...{address.slice(-4)}
+                Connected: {address.slice(0, 6)}...{address.slice(-4)}
               </p>
             </div>
           )}
@@ -227,7 +226,7 @@ useEffect(() => {
           {txHash && (
             <div className="p-3 bg-blue-500/20 border border-blue-400/50 rounded-lg">
               <p className="text-sm text-blue-100 mb-2">
-                {isConfirming ? '⏳ Confirming transaction...' : '✅ Transaction submitted!'}
+                {isConfirming ? 'Confirming transaction...' : 'Transaction submitted!'}
               </p>
               <a
                 href={`https://sepolia.basescan.org/tx/${txHash}`}
