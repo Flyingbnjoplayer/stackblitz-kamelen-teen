@@ -39,9 +39,7 @@ export function NFTMintModal({
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: txHash,
     });
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: txHash,
-  });
+  
 
   // Reset state when modal opens
   useEffect(() => {
