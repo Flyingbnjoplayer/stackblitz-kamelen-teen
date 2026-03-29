@@ -3,15 +3,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt, useSwitchChain } from 'wagmi';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -41,7 +33,7 @@ export function NFTMintModal({
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
   const { switchChain } = useSwitchChain();
   const { writeContract, isPending: isWriting } = useWriteContract();
-  const { writeContract, isPending: isWriting } = useWriteContract();
+ 
   const { switchChainAsync } = useSwitchChain();
   const chainId = useChainId();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
