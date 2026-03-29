@@ -20,7 +20,14 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareB
   const [isMintModalOpen, setIsMintModalOpen] = useState<boolean>(false);
   const isInFarcaster = useIsInFarcaster();
   const { address } = useAccount();
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(typeof navigator !== 'undefined' ? navigator.userAgent : '');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  }, []);
+
+  
+
 
   useEffect(() => {
     // Reset sharing state when app becomes visible again
@@ -89,9 +96,9 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareB
       // CRITICAL: Use ONLY the direct blob URL as the single embed
       // NO mentions, NO extra text that could be parsed as links
       // This ensures the image displays full-size in the post
-      const result = await sdk.actions.composeCast({
+      const result = await sdk.actions.composeCast({  
         text: `Just created some glitch art on Base! ⚡`,
-        embeds: [uploadData.directImageUrl],
+        embeds: [uploadData.imageUrl],  // Use preview URL with metadata
       });
       
       console.log('Compose cast result:', result);
