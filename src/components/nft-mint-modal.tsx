@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi';
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useSwitchChain } from 'wagmi';
 import {
   Dialog,
   DialogContent,
@@ -38,8 +39,14 @@ export function NFTMintModal({
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [metadataUri, setMetadataUri] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
-
+  const { switchChain } = useSwitchChain();
   const { writeContract, isPending: isWriting } = useWriteContract();
+  const { writeContract, isPending: isWriting } = useWriteContract();
+  const { switchChainAsync } = useSwitchChain();
+  const chainId = useChainId();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash: txHash,
+    });
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: txHash,
   });
@@ -55,15 +62,18 @@ export function NFTMintModal({
   }, [isOpen]);
 
   // Handle successful confirmation
-  useEffect(() => {
-    if (isConfirmed && txHash) {
-      toast.success('NFT minted successfully!', { id: 'mint-toast' });
-      if (onMintSuccess) onMintSuccess();
-      setTimeout(() => {
-        onClose();
-      }, 1500);
-    }
-  }, [isConfirmed, txHash, onMintSuccess, onClose]);
+  // Handle successful confirmation
+useEffect(() => {
+  if (isConfirmed && txHash) {
+    // Reset txHash immediately to prevent re-firing
+    setTxHash(undefined);
+    toast.success('NFT minted successfully!', { id: 'mint-toast' });
+    if (onMintSuccess) onMintSuccess();
+    setTimeout(() => {
+      onClose();
+    }, 1500);
+  }
+}, [isConfirmed, txHash, onMintSuccess, onClose]);
 
   const handleUpload = async (): Promise<string | null> => {
     if (!nftName.trim()) {
@@ -106,48 +116,60 @@ export function NFTMintModal({
     }
   };
 
-  const handleMint = async (): Promise<void> => {
-    if (!isConnected || !address) {
-      toast.error('Please connect your wallet first');
+const handleMint = async (): Promise<void> => {     
+  if (!isConnected || !address) {
+    toast.error('Please connect your wallet first');
+    return;
+  }
+
+  // Check and switch to Base Sepolia if needed
+  if (chainId !== baseSepolia.id) {
+    toast.loading('Switching to Base Sepolia...', { id: 'mint-toast' });
+    try {
+      await switchChainAsync({ chainId: baseSepolia.id });
+      toast.dismiss('mint-toast');
+    } catch (switchError) {
+      toast.error('Please switch to Base Sepolia network', { id: 'mint-toast' });
       return;
     }
+  }
 
-    // Upload first if not done
-    let uri = metadataUri;
-    if (!uri) {
-      uri = await handleUpload();
-      if (!uri) return;
-      setMetadataUri(uri);
-    }
+  // Upload first if not done
+  let uri = metadataUri;
+  if (!uri) {
+    uri = await handleUpload();
+    if (!uri) return;
+    setMetadataUri(uri);
+  }
 
-    toast.loading('Confirm transaction in wallet...', { id: 'mint-toast' });
+  toast.loading('Confirm transaction in wallet...', { id: 'mint-toast' });
 
-    try {
-      writeContract({
-        address: NFT_CONTRACT_ADDRESS,
-        abi: GLITCH_NFT_ABI,
-        functionName: 'safeMint',
-        args: [address, uri],
-        chainId: baseSepolia.id,
-      }, {
-        onSuccess: (hash) => {
-          setTxHash(hash);
-          toast.loading('Minting NFT...', { id: 'mint-toast' });
-        },
-        onError: (error) => {
-          const msg = error.message || 'Transaction failed';
-          if (msg.includes('User rejected')) {
-            toast.error('Transaction rejected', { id: 'mint-toast' });
-          } else {
-            toast.error(`Mint failed: ${msg}`, { id: 'mint-toast' });
-          }
-        },
-      });
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      toast.error(`Mint failed: ${msg}`, { id: 'mint-toast' });
-    }
-  };
+  try {
+    writeContract({
+      address: NFT_CONTRACT_ADDRESS,
+      abi: GLITCH_NFT_ABI,
+      functionName: 'safeMint',
+      args: [address, uri],
+      chainId: baseSepolia.id,
+    }, {
+      onSuccess: (hash) => {
+        setTxHash(hash);
+        toast.loading('Minting NFT...', { id: 'mint-toast' });
+      },
+      onError: (error) => {
+        const msg = error.message || 'Transaction failed';
+        if (msg.includes('User rejected')) {        
+          toast.error('Transaction rejected', { id: 'mint-toast' });
+        } else {
+          toast.error(`Mint failed: ${msg}`, { id: 'mint-toast' });
+        }
+      },
+    });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    toast.error(`Mint failed: ${msg}`, { id: 'mint-toast' });
+  }
+};
 
   const isLoading = isUploading || isWriting || isConfirming;
 
