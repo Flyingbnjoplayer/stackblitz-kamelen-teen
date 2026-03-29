@@ -226,18 +226,19 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareB
         </Button>
 )}
 
-        {/* Share on Based button - mobile only */}
-{isMobile && (
-  <Button
-    onClick={handleBasedShare}
-    disabled={isSharing || !imageDataUrl}       
-    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg text-base py-6 border-2 border-white/20"
-  >
-    <Share2 className="w-5 h-5 mr-2" />
-    <span className="font-bold text-white">     
-      {isSharing ? 'Sharing...' : 'Share on Based'}
-    </span>
-  </Button>
+       {/* Share on Based button - mobile only */}
+        {isMobile && (
+          <Button
+            onClick={handleBasedShare}
+            disabled={isSharing || !imageDataUrl}       
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg text-base py-6 border-2 border-white/20"
+          >
+            <Share2 className="w-5 h-5 mr-2" />
+            <span className="font-bold text-white">     
+              {isSharing ? 'Sharing...' : 'Share on Based'}
+            </span>
+          </Button>
+        )}
 
         {/* Share on Warpcast button */}
         <Button

@@ -176,10 +176,10 @@ export function GlitchEditor({ effectStates, onImageProcessed, onImageLoaded, re
     reader.readAsDataURL(file);
   };
 
-  const handleFileSelect = (file: File): void => {
-    setPreviewFile(file);
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
+  const handleFileSelect = (file: File): void => {    
+    console.log('File selected, loading directly to editor');
+    setIsLoadingImage(true);
+    loadImageToEditor(file);
   };
 
   const handleCameraCapture = (file: File): void => {

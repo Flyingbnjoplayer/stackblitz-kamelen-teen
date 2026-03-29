@@ -63,17 +63,18 @@ export function NFTMintModal({
 
   // Handle successful confirmation
   // Handle successful confirmation
-useEffect(() => {
-  if (isConfirmed && txHash) {
-    // Reset txHash immediately to prevent re-firing
-    setTxHash(undefined);
-    toast.success('NFT minted successfully!', { id: 'mint-toast' });
-    if (onMintSuccess) onMintSuccess();
-    setTimeout(() => {
-      onClose();
-    }, 1500);
-  }
-}, [isConfirmed, txHash, onMintSuccess, onClose]);
+// Handle successful confirmation
+  useEffect(() => {
+    if (isConfirmed && txHash) {
+      // Reset immediately to prevent re-firing
+      setTxHash(undefined);
+      toast.success('NFT minted successfully!', { id: 'mint-toast' });
+      if (onMintSuccess) onMintSuccess();
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    }
+  }, [isConfirmed, txHash, onMintSuccess, onClose]);
 
   const handleUpload = async (): Promise<string | null> => {
     if (!nftName.trim()) {
