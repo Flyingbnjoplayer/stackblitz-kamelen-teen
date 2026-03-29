@@ -20,9 +20,9 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareB
   const [isMintModalOpen, setIsMintModalOpen] = useState<boolean>(false);
   const isInFarcaster = useIsInFarcaster();
   const { address } = useAccount();
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(typeof navigator !== 'undefined' ? navigator.userAgent : '');
 
   useEffect(() => {
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(typeof navigator !== 'undefined' ? navigator.userAgent : '');
     // Reset sharing state when app becomes visible again
     // This handles the case where user cancels the post and returns to the app
     const handleVisibilityChange = (): void => {
