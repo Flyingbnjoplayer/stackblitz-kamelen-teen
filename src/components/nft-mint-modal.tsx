@@ -37,7 +37,7 @@ export function NFTMintModal({
   const [nftDescription, setNftDescription] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [metadataUri, setMetadataUri] = useState<string | null>(null);
-  const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
+  const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
 
   const { writeContract, isPending: isWriting } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
@@ -50,7 +50,7 @@ export function NFTMintModal({
       setNftName('');
       setNftDescription('');
       setMetadataUri(null);
-      setTxHash(null);
+      setTxHash(undefined);
     }
   }, [isOpen]);
 
