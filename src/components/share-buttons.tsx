@@ -110,6 +110,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareB
         // User successfully posted - reset the app
         console.log('Cast posted successfully, resetting app');
         setMessage({ type: 'success', text: '✅ Shared on Based!' });
+        setIsSharing(false); 
         setTimeout(() => {
           setMessage(null);
           // Reset the app state after successful post
