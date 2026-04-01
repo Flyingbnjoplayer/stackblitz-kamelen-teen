@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect fill="#000" width="512" height="512"/><text x="256" y="280" font-size="40" text-anchor="middle" fill="white">Glitch Art</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect fill="#000" width="512" height="512"/>
+  <text x="256" y="250" font-size="40" text-anchor="middle" fill="white" font-family="sans-serif">Glitch Art</text>
+  <text x="256" y="300" font-size="20" text-anchor="middle" fill="#8B5CF6" font-family="sans-serif">Studio</text>
+</svg>
