@@ -98,7 +98,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareB
       // This ensures the image displays full-size in the post
       const result = await sdk.actions.composeCast({  
         text: `Just created some glitch art on Base! ⚡`,
-        embeds: [uploadData.imageUrl],  // Use preview URL with metadata
+        embeds: [uploadData.imageUrl],  // Preview URL with OG metadata
       });
       
       console.log('Compose cast result:', result);
