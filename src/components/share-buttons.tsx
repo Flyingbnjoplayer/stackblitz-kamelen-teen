@@ -12,12 +12,14 @@ export type ShareButtonsProps = {
   imageDataUrl: string;
   onShare?: () => void;
   onSuccessfulPost?: () => void;
+  onMintSuccess?: () => void;
 };
 
-export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareButtonsProps) {
+export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSuccess }: ShareButtonsProps) {
   const [isSharing, setIsSharing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isMintModalOpen, setIsMintModalOpen] = useState<boolean>(false);
+  const [hasMinted, setHasMinted] = useState(false);
   const isInFarcaster = useIsInFarcaster();
   const { address } = useAccount();
   const [isMobile, setIsMobile] = useState(false);
@@ -26,7 +28,10 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareB
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
   }, []);
 
-  
+  const handleMintSuccess = () => {
+    setHasMinted(true);
+    if (onMintSuccess) onMintSuccess();
+  };
 
 
   useEffect(() => {
@@ -222,17 +227,17 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareB
   return (
     <>
       <div className="space-y-3 w-full">
-        {/* Mint as NFT button - only show when wallet connected */}
-{address && (
-  <Button
-    onClick={() => setIsMintModalOpen(true)}    
-    disabled={isSharing || !imageDataUrl}       
-    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold shadow-lg text-base py-6 border-2 border-white/20"
-  >
-          <Sparkles className="w-5 h-5 mr-2" />
-          <span className="font-bold text-white">Mint as NFT</span>
-        </Button>
-)}
+       {/* Mint as NFT button - only show when wallet connected and not yet minted */}
+        {address && !hasMinted && (
+          <Button
+            onClick={() => setIsMintModalOpen(true)}
+            disabled={isSharing || !imageDataUrl}
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold shadow-lg text-base py-6 border-2 border-white/20"
+          >
+            <Sparkles className="w-5 h-5 mr-2" />
+            <span className="font-bold text-white">Mint as NFT</span>
+          </Button>
+        )}
 
        {/* Share on Based button - mobile only */}
         {isMobile && (
@@ -282,9 +287,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost }: ShareB
         isOpen={isMintModalOpen}
         onClose={() => setIsMintModalOpen(false)}
         imageUrl={imageDataUrl}
-        onMintSuccess={() => {
-          console.log('NFT minted successfully!');
-        }}
+        onMintSuccess={handleMintSuccess}
       />
     </>
   );

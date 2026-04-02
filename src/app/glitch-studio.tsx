@@ -9,7 +9,7 @@ import { ShareButtons } from '@/components/share-buttons';
 import { useAccount } from 'wagmi';
 import { useQuickAuth } from '@/hooks/useQuickAuth';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
-import { Download, RotateCcw } from 'lucide-react';
+import { Download, RotateCcw, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const defaultEffects: EffectState = {
@@ -28,6 +28,7 @@ export default function GlitchStudio() {
   const [effectStates, setEffectStates] = useState<EffectState>(defaultEffects);
   const [resetTrigger, setResetTrigger] = useState(0);
   const [hasImage, setHasImage] = useState(false);
+  const [hasMintedNft, setHasMintedNft] = useState(false);
 
   const { isConnected } = useAccount();
   const isInFarcaster = useIsInFarcaster();
@@ -51,6 +52,10 @@ export default function GlitchStudio() {
 
   const handleImageLoaded = useCallback((loaded: boolean) => {
     setHasImage(loaded);
+    // Reset mint state when new image is loaded
+    if (loaded) {
+      setHasMintedNft(false);
+    }
   }, []);
 
   const handleDownload = () => {
@@ -64,6 +69,18 @@ export default function GlitchStudio() {
     document.body.removeChild(link);
   };
 
+  const handleMintSuccess = useCallback(() => {
+    setHasMintedNft(true);
+  }, []);
+
+  const handleSuccessfulPost = useCallback(() => {
+    // Reset everything after successful share
+    setHasMintedNft(false);
+    setHasImage(false);
+    setEditedImage(null);
+    setResetTrigger((prev) => prev + 1);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-blue-900 text-white p-4">
       <div className="max-w-6xl mx-auto">
@@ -73,6 +90,22 @@ export default function GlitchStudio() {
           </h1>
           <p className="text-gray-400">Create stunning glitch effects & mint as NFTs on Base</p>
         </header>
+
+        {/* Instruction Guide */}
+        {!hasImage && (
+          <div className="bg-black/30 rounded-lg p-4 mb-6 max-w-md mx-auto text-center">
+            <p className="text-sm text-gray-300 mb-2">How it works:</p>
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-400 flex-wrap">
+              <span className="bg-purple-600/30 px-2 py-1 rounded">1. Upload Image</span>
+              <span>→</span>
+              <span className="bg-blue-600/30 px-2 py-1 rounded">2. Apply Effects</span>
+              <span>→</span>
+              <span className="bg-pink-600/30 px-2 py-1 rounded">3. Mint NFT</span>
+              <span>→</span>
+              <span className="bg-green-600/30 px-2 py-1 rounded">4. Share</span>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left Column - Editor */}
@@ -84,8 +117,8 @@ export default function GlitchStudio() {
               resetTrigger={resetTrigger}
             />
 
-            {/* Action Buttons */}
-            {hasImage && editedImage && (
+            {/* Action Buttons - Only show after mint */}
+            {hasImage && editedImage && hasMintedNft && (
               <div className="flex flex-wrap gap-3 justify-center">
                 <Button
                   onClick={handleDownload}
@@ -100,14 +133,25 @@ export default function GlitchStudio() {
                   className="border-black text-black hover:bg-black/10 bg-white"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
-                  Reset
+                  Change Image
                 </Button>
               </div>
             )}
 
-            {/* Share Buttons (includes Mint button) */}
-            {editedImage && (
-              <ShareButtons imageDataUrl={editedImage} />
+            {/* Share Buttons - Only show after mint */}
+            {editedImage && hasMintedNft && (
+              <ShareButtons 
+                imageDataUrl={editedImage} 
+                onSuccessfulPost={handleSuccessfulPost}
+              />
+            )}
+
+            {/* Mint Button - Only show before mint */}
+            {editedImage && !hasMintedNft && (
+              <ShareButtons 
+                imageDataUrl={editedImage} 
+                onMintSuccess={handleMintSuccess}
+              />
             )}
 
             {/* Wallet */}
