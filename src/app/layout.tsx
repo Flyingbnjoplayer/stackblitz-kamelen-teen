@@ -23,7 +23,8 @@ export const metadata: Metadata = {
     "fc:frame": JSON.stringify({
       "version": "next",
       "imageUrl": "https://usdozf7pplhxfvrl.public.blob.vercel-storage.com/thumbnail_ae1d2f16-cffb-450f-a2fa-1e4a267b3737-znMJHlnXVSDspmN6lMMSD4iMnQ9wgL",
-    })
+    }),
+    "base:app_id": "69cc1a89f468fca4e20110ba",
   }
 };
 
