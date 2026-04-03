@@ -244,16 +244,20 @@ export function GlitchEditor({ effectStates, onImageProcessed, onImageLoaded, re
   return (
     <div className="w-full space-y-4">
       <div className="relative w-full min-h-[300px] bg-black/30 backdrop-blur-sm rounded-lg overflow-hidden border-2 border-white/20 flex items-center justify-center">
-        {hasImage && (
-          <div className="p-2.5 inline-block">
-            <canvas
-              ref={canvasRef}
-              className="max-w-full h-auto block rounded"
-            />
-          </div>
-        )}
+        <canvas
+          ref={canvasRef}
+          className="block rounded"
+          style={{ 
+            display: hasImage ? 'block' : 'none',
+            maxWidth: '100%',
+            height: 'auto',
+            margin: '10px',
+          }}
+        />
 
+        
         {!hasImage && (
+          
           <>
             {isLoadingImage ? (
               <div className="text-center space-y-4 p-8">
