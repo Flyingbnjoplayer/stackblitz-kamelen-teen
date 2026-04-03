@@ -13,13 +13,14 @@ export type ShareButtonsProps = {
   onShare?: () => void;
   onSuccessfulPost?: () => void;
   onMintSuccess?: () => void;
+  hasMintedNft?: boolean;
 };
 
-export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSuccess }: ShareButtonsProps) {
+export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSuccess, hasMintedNft }: ShareButtonsProps) {
   const [isSharing, setIsSharing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isMintModalOpen, setIsMintModalOpen] = useState<boolean>(false);
-  const [hasMinted, setHasMinted] = useState(false);
+  
   const isInFarcaster = useIsInFarcaster();
   const { address } = useAccount();
   const [isMobile, setIsMobile] = useState(false);
@@ -29,9 +30,8 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   }, []);
 
   const handleMintSuccess = () => {
-    setHasMinted(true);
-    if (onMintSuccess) onMintSuccess();
-  };
+  if (onMintSuccess) onMintSuccess();
+};
 
 
   useEffect(() => {
@@ -228,7 +228,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
     <>
       <div className="space-y-3 w-full">
        {/* Mint as NFT button - only show when wallet connected and not yet minted */}
-        {address && !hasMinted && (
+        {address && !hasMintedNft && (
           <Button
             onClick={() => setIsMintModalOpen(true)}
             disabled={isSharing || !imageDataUrl}
@@ -240,7 +240,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
         )}
 
       {/* Share on Based button - mobile only, only after mint */}
-        {isMobile && hasMinted && (
+        {isMobile && hasMintedNft && (
           <Button
             onClick={handleBasedShare}
             disabled={isSharing || !imageDataUrl}
@@ -254,7 +254,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
         )}
 
         {/* Share on Warpcast button - only after mint */}
-        {hasMinted && (
+        {hasMintedNft && (
           <Button
             onClick={handleWarpcastShare}
             disabled={isSharing || !imageDataUrl}
