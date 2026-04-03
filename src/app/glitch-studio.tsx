@@ -148,14 +148,6 @@ export default function GlitchStudio() {
               />
             )}
 
-            {/* Mint Button - Only show before mint */}
-            {editedImage && !hasMintedNft && (
-              <ShareButtons 
-                imageDataUrl={editedImage} 
-                onMintSuccess={handleMintSuccess}
-              />
-            )}
-
             {/* Wallet */}
             <div className="space-y-4">
               <WalletConnectButton />
