@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from './ui/button';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Lock, Unlock } from 'lucide-react';
 import { RotaryKnob } from './ui/rotary-knob';
 
 export type EffectState = {
@@ -19,6 +19,8 @@ export type GlitchControlsProps = {
   effectStates: EffectState;
   onEffectChange: (effectId: string, value: number) => void;
   onReset: () => void;
+  lockEffects: boolean;
+  onToggleLock: () => void;
 };
 
 const effects = [
@@ -32,20 +34,46 @@ const effects = [
   { id: 'bitCrush', label: 'Bit Crush', icon: '🔨' },
 ];
 
-export function GlitchControls({ effectStates, onEffectChange, onReset }: GlitchControlsProps) {
+export function GlitchControls({ 
+  effectStates, 
+  onEffectChange, 
+  onReset, 
+  lockEffects, 
+  onToggleLock 
+}: GlitchControlsProps) {
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 border border-white/20">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-white">Effects</h2>
-        <Button
-          onClick={onReset}
-          variant="outline"
-          size="sm"
-          className="border-white/30 hover:bg-white/10 bg-white/5"
-        >
-          <RotateCcw className="w-4 h-4 mr-2 text-white" />
-          <span className="font-bold text-white">Reset All</span>
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={onToggleLock}
+            variant="outline"
+            size="sm"
+            className={`border-white/30 hover:bg-white/10 ${lockEffects ? 'bg-green-600/50 border-green-400' : 'bg-white/5'}`}
+          >
+            {lockEffects ? (
+              <>
+                <Lock className="w-4 h-4 mr-2 text-white" />
+                <span className="font-bold text-white">Locked</span>
+              </>
+            ) : (
+              <>
+                <Unlock className="w-4 h-4 mr-2 text-white" />
+                <span className="font-bold text-white">Lock</span>
+              </>
+            )}
+          </Button>
+          <Button
+            onClick={onReset}
+            variant="outline"
+            size="sm"
+            className="border-white/30 hover:bg-white/10 bg-white/5"
+          >
+            <RotateCcw className="w-4 h-4 mr-2 text-white" />
+            <span className="font-bold text-white">Reset All</span>
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -60,7 +88,7 @@ export function GlitchControls({ effectStates, onEffectChange, onReset }: Glitch
                 {effectStates[effect.id as keyof EffectState]}
               </div>
             </div>
-            
+
             <RotaryKnob
               value={effectStates[effect.id as keyof EffectState]}
               onChange={(value: number) => onEffectChange(effect.id, value)}

@@ -29,7 +29,7 @@ export default function GlitchStudio() {
   const [resetTrigger, setResetTrigger] = useState(0);
   const [hasImage, setHasImage] = useState(false);
   const [hasMintedNft, sethasMintedNft] = useState(false);
-
+  const [lockEffects, setLockEffects] = useState(false); 
   const { isConnected } = useAccount();
   const isInFarcaster = useIsInFarcaster();
   useQuickAuth(isInFarcaster);
@@ -42,8 +42,17 @@ export default function GlitchStudio() {
   }, []);
 
   const handleReset = useCallback(() => {
-    setEffectStates(defaultEffects);
-    setResetTrigger((prev) => prev + 1);
+    if (lockEffects) {
+      // Keep current effect values, just reset the trigger
+      setResetTrigger((prev) => prev + 1);
+    } else {
+      setEffectStates(defaultEffects);
+      setResetTrigger((prev) => prev + 1);
+    }
+  }, [lockEffects]);
+
+  const handleToggleLock = useCallback(() => {
+    setLockEffects((prev) => !prev);
   }, []);
 
   const handleImageProcessed = useCallback((dataUrl: string) => {
@@ -161,6 +170,8 @@ export default function GlitchStudio() {
               effectStates={effectStates}
               onEffectChange={handleEffectChange}
               onReset={handleReset}
+              lockEffects={lockEffects}
+              onToggleLock={handleToggleLock}
             />
           </div>
         </div>
