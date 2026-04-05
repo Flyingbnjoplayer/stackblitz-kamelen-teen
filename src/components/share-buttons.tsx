@@ -55,173 +55,101 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   }, []);
 
   const handleBasedShare = async (): Promise<void> => {
-    console.log('Share button clicked');
-    console.log('Image data URL length:', imageDataUrl.length);
-    console.log('Is in Farcaster:', isInFarcaster);
-    
-    setMessage(null);
-    setIsSharing(true);
+  console.log('Share button clicked');
+  setMessage(null);
+  setIsSharing(true);
 
-    try {
-      // First, upload the image to get a public URL
-      console.log('Uploading image...');
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ imageData: imageDataUrl }),
-      });
+  try {
+    // Upload image first
+    console.log('Uploading image...');
+    const uploadResponse = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageData: imageDataUrl }),
+    });
 
-      console.log('Upload response status:', uploadResponse.status);
-
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        console.error('❌ Upload failed:', uploadResponse.status, errorText);
-        let errorData;
-        try {
-          errorData = JSON.parse(errorText);
-        } catch {
-          errorData = { error: errorText };
-        }
-        throw new Error(errorData.error || `Upload failed with status ${uploadResponse.status}`);
-      }
-
-      const uploadData = await uploadResponse.json() as { imageUrl: string; directImageUrl: string; id: string; blobUrl: string };
-      console.log('Image uploaded successfully:', uploadData);
-
-      // Compose cast in Farcaster/Based app
-      console.log('Attempting to compose cast in Farcaster/Based...');
-      console.log('Direct image URL:', uploadData.directImageUrl);
-      
-      // Make sure SDK is ready
-      await sdk.actions.ready();
-      console.log('SDK is ready');
-      
-      // CRITICAL: Use ONLY the direct blob URL as the single embed
-      // NO mentions, NO extra text that could be parsed as links
-      // This ensures the image displays full-size in the post
-      const result = await sdk.actions.composeCast({  
-        text: `Just created some glitch art on Base! ⚡`,
-        embeds: [uploadData.imageUrl],  // Preview URL with OG metadata
-      });
-      
-      console.log('Compose cast result:', result);
-
-      // Always reset the sharing state when we return from the composer
-      setIsSharing(false);
-
-      if (result?.cast) {
-        // User successfully posted - reset the app
-        console.log('Cast posted successfully, resetting app');
-        setMessage({ type: 'success', text: '✅ Shared on Based!' });
-        setIsSharing(false); 
-        setTimeout(() => {
-          setMessage(null);
-          // Reset the app state after successful post
-          if (onSuccessfulPost) {
-            onSuccessfulPost();
-          }
-        }, 1500);
-      } else {
-        // User cancelled - keep the image and just reset button state
-        console.log('Cast was cancelled by user, keeping image');
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Share failed.';
-      console.error('❌ Share error:', errorMessage, error);
-      
-      setIsSharing(false);
-      
-      // Provide more specific error messages
-      let userMessage = 'Failed to share on Based. Please try again.';
-      if (errorMessage.includes('blob storage') || errorMessage.includes('BLOB_READ_WRITE_TOKEN') || errorMessage.includes('Image storage not configured')) {
-        userMessage = '⚠️ Image storage not configured. Please set up Vercel Blob in your project settings.';
-      } else if (errorMessage.includes('upload')) {
-        userMessage = 'Failed to upload image. Please check your connection and try again.';
-      }
-      
-      setMessage({ 
-        type: 'error', 
-        text: userMessage
-      });
-      setTimeout(() => setMessage(null), 5000);
+    if (!uploadResponse.ok) {
+      throw new Error('Upload failed');
     }
-  };
+
+    const uploadData = await uploadResponse.json() as { imageUrl: string; directImageUrl: string };
+    console.log('Image uploaded:', uploadData);
+
+    // Make sure SDK is ready
+    await sdk.actions.ready();
+    console.log('SDK is ready');
+
+    // Check if composeCast is available
+    if (!sdk?.actions?.composeCast) {
+      console.error('SDK composeCast not available');
+      await navigator.clipboard.writeText(uploadData.directImageUrl);
+      setMessage({ type: 'error', text: 'URL copied to clipboard! Share manually.' });
+      setIsSharing(false);
+      return;
+    }
+
+    // Compose cast
+    const result = await sdk.actions.composeCast({
+      text: `Just created some glitch art on Base! ⚡`,
+      embeds: [uploadData.imageUrl],
+    });
+
+    console.log('Compose result:', result);
+    setIsSharing(false);
+
+    if (result?.cast) {
+      setMessage({ type: 'success', text: '✅ Shared on Based!' });
+      setTimeout(() => {
+        setMessage(null);
+        if (onSuccessfulPost) onSuccessfulPost();
+      }, 1500);
+    }
+  } catch (error) {
+    console.error('Share error:', error);
+    setIsSharing(false);
+    setMessage({ type: 'error', text: 'Failed to share. Please try again.' });
+    setTimeout(() => setMessage(null), 3000);
+  }
+};
 
   const handleWarpcastShare = async (): Promise<void> => {
-    console.log('Warpcast share button clicked');
-    setMessage(null);
-    setIsSharing(true);
+  console.log('Warpcast share clicked');
+  setMessage(null);
+  setIsSharing(true);
 
-    try {
-      // Upload the image first
-      console.log('Uploading image...');
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ imageData: imageDataUrl }),
-      });
+  try {
+    // Upload image
+    const uploadResponse = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageData: imageDataUrl }),
+    });
 
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        console.error('❌ Upload failed:', uploadResponse.status, errorText);
-        let errorData;
-        try {
-          errorData = JSON.parse(errorText);
-        } catch {
-          errorData = { error: errorText };
-        }
-        throw new Error(errorData.error || `Upload failed with status ${uploadResponse.status}`);
-      }
+    if (!uploadResponse.ok) throw new Error('Upload failed');
 
-      const uploadData = await uploadResponse.json() as { imageUrl: string; directImageUrl: string; id: string; blobUrl: string };
-      console.log('Image uploaded successfully:', uploadData);
+    const uploadData = await uploadResponse.json() as { directImageUrl: string };
+    console.log('Image uploaded:', uploadData);
 
-      // Open Warpcast composer in browser
-      console.log('Opening Warpcast web composer');
-      const text = encodeURIComponent(`Just created some glitch art on Base! ⚡`);
-      const warpcastUrl = `https://warpcast.com/~/compose?text=${text}&embeds[]=${encodeURIComponent(uploadData.directImageUrl)}`;
-      
-      console.log('Opening Warpcast URL:', warpcastUrl);
-      const opened = window.open(warpcastUrl, '_blank', 'noopener,noreferrer');
-      
-      if (opened) {
-        setMessage({ 
-          type: 'success', 
-          text: '✅ Opening Warpcast composer...' 
-        });
-      } else {
-        setMessage({ 
-          type: 'error', 
-          text: 'Please allow pop-ups to share on Warpcast' 
-        });
-      }
-      setTimeout(() => setMessage(null), 3000);
-      setIsSharing(false);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Share failed.';
-      console.error('❌ Warpcast share error:', errorMessage, error);
-      
-      setIsSharing(false);
-      
-      // Provide more specific error messages
-      let userMessage = 'Failed to upload image. Please try again.';
-      if (errorMessage.includes('blob storage') || errorMessage.includes('BLOB_READ_WRITE_TOKEN') || errorMessage.includes('Image storage not configured')) {
-        userMessage = '⚠️ Image storage not configured. Please set up Vercel Blob in your project settings.';
-      } else if (errorMessage.includes('upload')) {
-        userMessage = 'Failed to upload image. Please check your connection and try again.';
-      }
-      
-      setMessage({ 
-        type: 'error', 
-        text: userMessage
-      });
-      setTimeout(() => setMessage(null), 5000);
-    }
-  };
+    const text = encodeURIComponent(`Just created some glitch art on Base! ⚡`);
+    
+    // Use deep link on mobile, web URL on desktop
+    const warpcastUrl = isMobile
+      ? `farcaster://compose?text=${text}&embeds[]=${encodeURIComponent(uploadData.directImageUrl)}`
+      : `https://warpcast.com/~/compose?text=${text}&embeds[]=${encodeURIComponent(uploadData.directImageUrl)}`;
+
+    console.log('Opening:', warpcastUrl);
+    window.open(warpcastUrl, '_blank', 'noopener,noreferrer');
+
+    setMessage({ type: 'success', text: '✅ Opening Warpcast...' });
+    setTimeout(() => setMessage(null), 3000);
+    setIsSharing(false);
+  } catch (error) {
+    console.error('Warpcast share error:', error);
+    setIsSharing(false);
+    setMessage({ type: 'error', text: 'Failed to share. Please try again.' });
+    setTimeout(() => setMessage(null), 3000);
+  }
+};
 
   // Show all action buttons simultaneously
   return (

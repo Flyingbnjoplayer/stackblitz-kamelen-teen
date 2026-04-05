@@ -11,6 +11,8 @@ import { useQuickAuth } from '@/hooks/useQuickAuth';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
 import { Download, RotateCcw, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useSwitchChain } from 'wagmi';
+import { baseSepolia } from 'viem/chains';
 
 const defaultEffects: EffectState = {
   rgbSplit: 0,
@@ -31,6 +33,15 @@ export default function GlitchStudio() {
   const [hasMintedNft, sethasMintedNft] = useState(false);
   const [lockEffects, setLockEffects] = useState(false); 
   const { isConnected } = useAccount();
+const { switchChain } = useSwitchChain();
+const chainId = useChainId();
+
+// Auto-switch to Base Sepolia when wallet connects
+useEffect(() => {
+  if (isConnected && chainId !== baseSepolia.id) {
+    switchChain?.({ chainId: baseSepolia.id });
+  }
+}, [isConnected, chainId, switchChain]);
   const isInFarcaster = useIsInFarcaster();
   useQuickAuth(isInFarcaster);
 

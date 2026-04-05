@@ -40,6 +40,14 @@ export function NFTMintModal({
     hash: txHash,
     });
   
+    // Restore pending transaction on mount (survives app restart when returning from wallet)
+useEffect(() => {
+  const pendingTx = localStorage.getItem('pendingMintTx');
+  if (pendingTx) {
+    setTxHash(pendingTx as `0x${string}`);
+    localStorage.removeItem('pendingMintTx');
+  }
+}, []);
 
   // Reset state when modal opens
   useEffect(() => {
@@ -145,6 +153,7 @@ const handleMint = async (): Promise<void> => {
     }, {
       onSuccess: (hash) => {
         setTxHash(hash);
+        localStorage.setItem('pendingMintTx', hash); // Persist in case app closes
         toast.loading('Minting NFT...', { id: 'mint-toast' });
       },
       onError: (error) => {
