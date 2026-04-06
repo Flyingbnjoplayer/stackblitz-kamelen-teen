@@ -1,7 +1,7 @@
 import { createConfig, http } from 'wagmi';
 import { base, baseSepolia } from 'wagmi/chains';
 import { coinbaseWallet, metaMask, injected } from 'wagmi/connectors';
-import { farcasterConnector } from '@farcaster/miniapp-wagmi-connector';
+import farcasterConnector from '@farcaster/miniapp-wagmi-connector';
 import { QueryClient } from '@tanstack/react-query';
 
 const DEFAULT_CHAIN_ID = Number(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID ?? '84532');
