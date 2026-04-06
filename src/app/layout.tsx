@@ -20,14 +20,16 @@ export const metadata: Metadata = {
   title: "Glitch NFT Studio",
   description: "Create, mint as NFT, and share retro glitch art as NFTs on Base. Real-time effects including RGB split, VHS distortion, and more. Mint your creations and share on farcaster.",
   openGraph: {
+    title: "Glitch NFT Studio",
+    description: "Create, mint, and share retro glitch art as NFTs on Base",
     images: ['/og-image.png'],
   },
   other: {
-     "base:app_id": "69cc1a89f468fca4e20110ba", 
     "fc:frame": JSON.stringify({
-      "version": "next",
-      "imageUrl": "https://usdozf7pplhxfvrl.public.blob.vercel-storage.com/thumbnail_ae1d2f16-cffb-450f-a2fa-1e4a267b3737-znMJHlnXVSDspmN6lMMSD4iMnQ9wgL",
+      version: "next",
+      imageUrl: "https://stackblitz-kamelen-teen.vercel.app/thumbnail.png",
     }),
+    "base:app_id": "69cc1a89f468fca4e20110ba",
   }
 };
 
