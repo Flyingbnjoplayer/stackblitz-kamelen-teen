@@ -11,7 +11,6 @@ import { useQuickAuth } from '@/hooks/useQuickAuth';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
 import { Download, RotateCcw, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useSwitchChain } from 'wagmi';
 import { baseSepolia } from 'viem/chains';
 
 const defaultEffects: EffectState = {
