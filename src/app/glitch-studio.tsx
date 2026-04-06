@@ -6,7 +6,7 @@ import { GlitchControls, type EffectState } from '@/components/glitch-controls';
 import { WalletConnectButton } from '@/components/wallet-connect-button';
 import { WalletInfoPanel } from '@/components/wallet-info-panel';
 import { ShareButtons } from '@/components/share-buttons';
-import { useAccount } from 'wagmi';
+import { useAccount, useSwitchChain, useChainId } from 'wagmi';
 import { useQuickAuth } from '@/hooks/useQuickAuth';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
 import { Download, RotateCcw, Upload } from 'lucide-react';
