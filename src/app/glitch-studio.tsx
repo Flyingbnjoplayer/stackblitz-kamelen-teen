@@ -12,6 +12,7 @@ import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
 import { Download, RotateCcw, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { baseSepolia } from 'viem/chains';
+import { sdk } from '@farcaster/miniapp-sdk';
 
 const defaultEffects: EffectState = {
   rgbSplit: 0,
