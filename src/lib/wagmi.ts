@@ -30,7 +30,7 @@ export const config = createConfig({
     [base.id]: http(ALCHEMY_MAINNET_URL),
   },
   ssr: false,
-  multiInjectedProvidersDiscovery: false, // Disable auto-discovery of injected wallets
+  multiInjectedProviderDiscovery: false, // Disable auto-discovery of injected wallets
 });
 
 export const queryClient = new QueryClient({
