@@ -36,7 +36,6 @@ export default function GlitchStudio() {
 const { switchChain } = useSwitchChain();
 const chainId = useChainId();
 
-// Add this inside the GlitchStudio component
 // Debug: Check Farcaster SDK context
 useEffect(() => {
   const debugFarcaster = async () => {
@@ -46,28 +45,10 @@ useEffect(() => {
       
       if (inMiniApp) {
         const context = await sdk.context
-        console.log('🔍 Full SDK context:', JSON.stringify(context, null, 2))
+        console.log('🔍 Full SDK context:', context)
         console.log('🔍 context.user:', context?.user)
-        
-        // Try getting wallet address
-        try {
-          const wallet = await sdk.wallet
-          console.log('🔍 sdk.wallet:', wallet)
-        } catch (e) {
-          console.log('🔍 sdk.wallet error:', e)
-        }
-        
-        // Try getting signer address
-        try {
-          const signer = await sdk.wallet.getEthereumSigner?.()
-          console.log('🔍 ethereum signer:', signer)
-          if (signer?.getAddress) {
-            const addr = await signer.getAddress()
-            console.log('🔍 signer address:', addr)
-          }
-        } catch (e) {
-          console.log('🔍 signer error:', e)
-        }
+        console.log('🔍 context.user fid:', context?.user?.fid)
+        console.log('🔍 context.user username:', context?.user?.username)
       }
     } catch (e) {
       console.log('🔍 Debug error:', e)
