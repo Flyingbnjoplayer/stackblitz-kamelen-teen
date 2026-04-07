@@ -153,16 +153,23 @@ export function NFTMintModal({
         await switchChainAsync?.({ chainId: baseSepolia.id });
       }
 
-      const hash = await writeContract({
+      await writeContract({
         address: NFT_CONTRACT_ADDRESS,
         abi: GLITCH_NFT_ABI,
         functionName: 'safeMint',
         args: [address as `0x${string}`, uri],
+      }, {
+        onSuccess: (hash) => {
+          console.log('Transaction submitted:', hash);
+          setTxHash(hash);
+          localStorage.setItem('pendingMintTx', hash);
+          toast.loading('Confirming transaction...', { id: 'mint-toast' });
+        },
+        onError: (error) => {
+          console.error('Transaction error:', error);
+          toast.error('Failed to submit transaction', { id: 'mint-toast' });
+        }
       });
-
-      setTxHash(hash);
-      localStorage.setItem('pendingMintTx', hash);
-      toast.loading('Confirming transaction...', { id: 'mint-toast' });
     } catch (error) {
       console.error('Mint error:', error);
       toast.error('Failed to mint NFT', { id: 'mint-toast' });
