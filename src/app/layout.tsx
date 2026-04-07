@@ -30,7 +30,6 @@ export const metadata: Metadata = {
       version: "next",
       imageUrl: "https://stackblitz-kamelen-teen.vercel.app/thumbnail.png",
     }),
-    "base:app_id": "69cc1a89f468fca4e20110ba",
   }
 };
 
