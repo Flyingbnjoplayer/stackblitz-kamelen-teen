@@ -32,7 +32,8 @@ export function NFTMintModal({
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [metadataUri, setMetadataUri] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
-  const hasCalledSuccess = useRef(false);  // Guard against double calls
+  const hasCalledSuccess = useRef(false);
+  const lastImageUrl = useRef<string>('');
   const { switchChain } = useSwitchChain();
   const { writeContract, isPending: isWriting } = useWriteContract();
 
@@ -42,7 +43,20 @@ export function NFTMintModal({
     hash: txHash,
   });
 
-  // Restore pending transaction on mount
+  // CRITICAL: Clear transaction state when imageUrl changes
+  // This prevents the old transaction from triggering onMintSuccess for a new image
+  useEffect(() => {
+    if (imageUrl !== lastImageUrl.current) {
+      console.log('🔄 Image URL changed, clearing transaction state');
+      console.log('  Old:', lastImageUrl.current?.slice(0, 50));
+      console.log('  New:', imageUrl?.slice(0, 50));
+      lastImageUrl.current = imageUrl || '';
+      setTxHash(undefined);
+      hasCalledSuccess.current = false;
+    }
+  }, [imageUrl]);
+
+  // Restore pending transaction on mount (survives app restart when returning from wallet)
   useEffect(() => {
     const pendingTx = localStorage.getItem('pendingMintTx');
     if (pendingTx) {
@@ -51,16 +65,15 @@ export function NFTMintModal({
     }
   }, []);
 
-  // Reset state when modal opens OR when imageUrl changes
+  // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
       setNftName('');
       setNftDescription('');
       setMetadataUri(null);
-      setTxHash(undefined);
-      hasCalledSuccess.current = false;  // Reset guard
+      hasCalledSuccess.current = false;
     }
-  }, [isOpen, imageUrl]);
+  }, [isOpen]);
 
   // Reset when modal closes
   useEffect(() => {
@@ -69,28 +82,14 @@ export function NFTMintModal({
     }
   }, [isOpen]);
 
-  // Handle successful confirmation
+  // Handle successful confirmation - with guard to prevent double calls
   useEffect(() => {
+    console.log('📋 Mint confirmation check:', { isConfirmed, txHash: txHash?.slice(0, 10), hasCalledSuccess: hasCalledSuccess.current });
+    
     if (isConfirmed && txHash && !hasCalledSuccess.current) {
+      console.log('✅ Mint confirmed, calling onMintSuccess');
       hasCalledSuccess.current = true;  // Set guard immediately
-      setTxHash(undefined);
-      toast.success('NFT minted successfully!', { id: 'mint-toast' });
-      if (onMintSuccess) onMintSuccess();
-      setTimeout(() => {
-        onClose();
-      }, 1500);
-    }
-  }, [isConfirmed, txHash, onMintSuccess, onClose]);
-
-  
-
-  // Handle successful confirmation
-  // Handle successful confirmation
-// Handle successful confirmation
-  useEffect(() => {
-    if (isConfirmed && txHash) {
-      // Reset immediately to prevent re-firing
-      setTxHash(undefined);
+      setTxHash(undefined);  // Clear txHash to prevent re-firing
       toast.success('NFT minted successfully!', { id: 'mint-toast' });
       if (onMintSuccess) onMintSuccess();
       setTimeout(() => {
@@ -123,200 +122,121 @@ export function NFTMintModal({
       });
 
       if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json().catch(() => ({ error: 'Upload failed' }));
-        throw new Error((errorData as { error?: string }).error || 'Upload failed');
+        throw new Error('Failed to upload metadata');
       }
 
-      const data = await uploadResponse.json() as { metadataUri?: string; metadataGateway?: string };
-      toast.success('Uploaded to IPFS!', { id: 'mint-toast' });
-      
-      return data.metadataUri || null;
+      const data = await uploadResponse.json() as { metadataUri: string };
+      setMetadataUri(data.metadataUri);
+      return data.metadataUri;
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Upload failed';
-      toast.error(`Upload failed: ${msg}`, { id: 'mint-toast' });
+      console.error('Upload error:', error);
+      toast.error('Failed to upload NFT metadata', { id: 'mint-toast' });
       return null;
     } finally {
       setIsUploading(false);
     }
   };
 
-const handleMint = async (): Promise<void> => {     
-  if (!isConnected || !address) {
-    toast.error('Please connect your wallet first');
-    return;
-  }
-
-  // Check and switch to Base Sepolia if needed
-  if (chainId !== baseSepolia.id) {
-    toast.loading('Switching to Base Sepolia...', { id: 'mint-toast' });
-    try {
-      await switchChainAsync({ chainId: baseSepolia.id });
-      toast.dismiss('mint-toast');
-    } catch (switchError) {
-      toast.error('Please switch to Base Sepolia network', { id: 'mint-toast' });
+  const handleMint = async () => {
+    if (!address) {
+      toast.error('Please connect your wallet');
       return;
     }
-  }
 
-  // Upload first if not done
-  let uri = metadataUri;
-  if (!uri) {
-    uri = await handleUpload();
+    const uri = await handleUpload();
     if (!uri) return;
-    setMetadataUri(uri);
-  }
 
-  toast.loading('Confirm transaction in wallet...', { id: 'mint-toast' });
+    try {
+      toast.loading('Minting NFT...', { id: 'mint-toast' });
 
-  try {
-    writeContract({
-      address: NFT_CONTRACT_ADDRESS,
-      abi: GLITCH_NFT_ABI,
-      functionName: 'safeMint',
-      args: [address, uri],
-      chainId: baseSepolia.id,
-    }, {
-      onSuccess: (hash) => {
-        setTxHash(hash);
-        localStorage.setItem('pendingMintTx', hash); // Persist in case app closes
-        toast.loading('Minting NFT...', { id: 'mint-toast' });
-      },
-      onError: (error) => {
-        const msg = error.message || 'Transaction failed';
-        if (msg.includes('User rejected')) {        
-          toast.error('Transaction rejected', { id: 'mint-toast' });
-        } else {
-          toast.error(`Mint failed: ${msg}`, { id: 'mint-toast' });
-        }
-      },
-    });
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : 'Unknown error';
-    toast.error(`Mint failed: ${msg}`, { id: 'mint-toast' });
-  }
-};
+      if (chainId !== baseSepolia.id) {
+        await switchChainAsync?.({ chainId: baseSepolia.id });
+      }
 
-  const isLoading = isUploading || isWriting || isConfirming;
+      const hash = await writeContract({
+        address: NFT_CONTRACT_ADDRESS,
+        abi: GLITCH_NFT_ABI,
+        functionName: 'safeMint',
+        args: [address as `0x${string}`, uri],
+      });
+
+      setTxHash(hash);
+      localStorage.setItem('pendingMintTx', hash);
+      toast.loading('Confirming transaction...', { id: 'mint-toast' });
+    } catch (error) {
+      console.error('Mint error:', error);
+      toast.error('Failed to mint NFT', { id: 'mint-toast' });
+    }
+  };
+
+  const isMinting = isUploading || isWriting || isConfirming;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-blue-900 to-purple-900 border-2 border-purple-400/50 max-h-[85vh] flex flex-col">
-        <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="flex items-center gap-2 text-white text-2xl">
-            <Sparkles className="w-6 h-6 text-yellow-400" />
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md bg-gray-900 border-purple-500/30 text-white">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Mint Your Glitch Art
           </DialogTitle>
-          <DialogDescription className="text-blue-100">
-            Create an NFT of your glitch creation on Base Sepolia
+          <DialogDescription className="text-gray-400">
+            Create an NFT of your glitch artwork on Base network
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4 overflow-y-auto flex-1 min-h-0">
-          {/* Preview */}
-          <div className="rounded-lg overflow-hidden border-2 border-purple-400/30 bg-black/20">
-            <Image 
-              src={imageUrl} 
-              alt="Glitch art preview" 
-              className="w-full h-auto" 
-              width={500} 
-              height={500} 
-              unoptimized 
-            />
-          </div>
+        <div className="space-y-4 py-4">
+          {imageUrl && (
+            <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-white/10">
+              <Image
+                src={imageUrl}
+                alt="Glitch Art Preview"
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
+          )}
 
-          {/* NFT Name */}
           <div className="space-y-2">
-            <Label htmlFor="nft-name" className="text-white font-bold">
-              NFT Name *
-            </Label>
+            <Label htmlFor="nft-name" className="text-white">NFT Name *</Label>
             <Input
               id="nft-name"
-              placeholder="e.g., Glitch Dreams #1"
               value={nftName}
               onChange={(e) => setNftName(e.target.value)}
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-              disabled={isLoading}
+              placeholder="My Glitch Art #1"
+              className="bg-gray-800 border-white/20 text-white placeholder:text-gray-500"
             />
           </div>
 
-          {/* NFT Description */}
           <div className="space-y-2">
-            <Label htmlFor="nft-description" className="text-white font-bold">
-              Description (Optional)
-            </Label>
+            <Label htmlFor="nft-description" className="text-white">Description</Label>
             <Input
               id="nft-description"
-              placeholder="Describe your artwork..."
               value={nftDescription}
               onChange={(e) => setNftDescription(e.target.value)}
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-              disabled={isLoading}
+              placeholder="Created with Glitch Art Studio"
+              className="bg-gray-800 border-white/20 text-white placeholder:text-gray-500"
             />
           </div>
-
-          {/* Wallet Status */}
-          {!isConnected && (
-            <div className="p-3 bg-yellow-500/20 border border-yellow-400/50 rounded-lg">
-              <p className="text-sm text-yellow-100">Please connect your wallet to mint NFTs</p>
-            </div>
-          )}
-
-          {isConnected && address && (
-            <div className="p-3 bg-green-500/20 border border-green-400/50 rounded-lg">
-              <p className="text-sm text-green-100">
-                Connected: {address.slice(0, 6)}...{address.slice(-4)}
-              </p>
-            </div>
-          )}
-
-          {/* Transaction Status */}
-          {txHash && (
-            <div className="p-3 bg-blue-500/20 border border-blue-400/50 rounded-lg">
-              <p className="text-sm text-blue-100 mb-2">
-                {isConfirming ? 'Confirming transaction...' : 'Transaction submitted!'}
-              </p>
-              <a
-                href={`https://sepolia.basescan.org/tx/${txHash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-blue-300 hover:text-blue-200 underline flex items-center gap-1"
-              >
-                View on BaseScan <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
-          )}
         </div>
 
-        <DialogFooter className="gap-2 flex-shrink-0 pt-4 border-t border-white/10 bg-gradient-to-br from-blue-900 to-purple-900">
+        <DialogFooter className="flex-col sm:flex-row gap-2">
           <Button
-            type="button"
             variant="outline"
             onClick={onClose}
-            disabled={isLoading}
-            className="border-white/50 bg-white/10 hover:bg-white/20 text-white"
+            className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10"
+            disabled={isMinting}
           >
             Cancel
           </Button>
           <Button
-            type="button"
             onClick={handleMint}
-            disabled={isLoading || !isConnected || !nftName.trim()}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold"
+            disabled={isMinting || !isConnected}
+            className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
           >
-            {isUploading ? (
+            {isMinting ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Uploading...
-              </>
-            ) : isWriting ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Confirm in Wallet...
-              </>
-            ) : isConfirming ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Minting...
+                {isUploading ? 'Uploading...' : isWriting ? 'Signing...' : 'Confirming...'}
               </>
             ) : (
               <>
