@@ -15,9 +15,20 @@ export function FarcasterSdkReady({ children }: FarcasterSdkReadyProps) {
       try {
         // Call SDK ready BEFORE any wagmi connectors initialize
         await sdk.actions.ready()
-        console.log('✅ Farcaster SDK ready before wagmi init')
+        console.log('✅ Farcaster SDK ready')
+        
+        // Also ensure wallet is available
+        const inMiniApp = await sdk.isInMiniApp()
+        if (inMiniApp) {
+          console.log('✅ Running in Farcaster mini-app')
+          
+          // Get the eth provider to ensure it's initialized
+          const provider = sdk.wallet.ethProvider
+          if (provider) {
+            console.log('✅ Farcaster wallet ethProvider available')
+          }
+        }
       } catch (error) {
-        // Not in Farcaster context - that's fine
         console.log('Not in Farcaster context:', error)
       } finally {
         setIsReady(true)
@@ -27,7 +38,6 @@ export function FarcasterSdkReady({ children }: FarcasterSdkReadyProps) {
   }, [])
 
   if (!isReady) {
-    // Show nothing while initializing - prevents flash
     return null
   }
 
