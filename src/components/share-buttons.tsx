@@ -34,8 +34,17 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   }, []);
 
   const handleMintSuccess = () => {
+    console.log('🎯 handleMintSuccess called in ShareButtons');
     if (onMintSuccess) onMintSuccess();
   };
+
+   // Debug logging
+  console.log('🔧 ShareButtons state:', {
+    isMintModalOpen,
+    hasMintedNft,
+    isConnected,
+    imageDataUrlLength: imageDataUrl?.length
+  });
 
   useEffect(() => {
     const handleVisibilityChange = (): void => {
@@ -151,7 +160,10 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
         {/* Mint as NFT button - show when connected and not yet minted */}
         {isConnected && !hasMintedNft && (
           <Button
-            onClick={() => setIsMintModalOpen(true)}
+            onClick={() => {
+              console.log('🔧 Opening mint modal, current isMintModalOpen:', isMintModalOpen);
+              setIsMintModalOpen(true)}
+            }
             disabled={isSharing || !imageDataUrl}
             className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold shadow-lg text-base py-6 border-2 border-white/20"
           >
