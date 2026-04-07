@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { sdk } from '@farcaster/miniapp-sdk';
-import { useAccount } from 'wagmi';
 import { Button } from './ui/button';
 import { Share2, Sparkles } from 'lucide-react';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
+import { useFarcasterWallet } from '@/hooks/useFarcasterWallet';
 import { NFTMintModal } from '@/components/nft-mint-modal';
 
 export type ShareButtonsProps = {
@@ -17,30 +17,30 @@ export type ShareButtonsProps = {
 };
 
 export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSuccess, hasMintedNft }: ShareButtonsProps) {
+  console.log('🎨 ShareButtons render - hasMintedNft:', hasMintedNft);
+  
   const [isSharing, setIsSharing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isMintModalOpen, setIsMintModalOpen] = useState<boolean>(false);
-  
+
   const isInFarcaster = useIsInFarcaster();
-  const { address } = useAccount();
+  const { address, isConnected } = useFarcasterWallet();
   const [isMobile, setIsMobile] = useState(false);
+
+  console.log('🎨 ShareButtons - address:', address, 'isConnected:', isConnected, 'isInFarcaster:', isInFarcaster);
 
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
   }, []);
 
   const handleMintSuccess = () => {
-  if (onMintSuccess) onMintSuccess();
-};
-
+    if (onMintSuccess) onMintSuccess();
+  };
 
   useEffect(() => {
-    // Reset sharing state when app becomes visible again
-    // This handles the case where user cancels the post and returns to the app
     const handleVisibilityChange = (): void => {
       if (document.visibilityState === 'visible') {
         console.log('App became visible, resetting share button state');
-        // Use a timeout to ensure any pending operations complete first
         setTimeout(() => {
           setIsSharing(false);
         }, 300);
@@ -55,108 +55,101 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   }, []);
 
   const handleBasedShare = async (): Promise<void> => {
-  console.log('Share button clicked');
-  setMessage(null);
-  setIsSharing(true);
+    console.log('Share button clicked');
+    setMessage(null);
+    setIsSharing(true);
 
-  try {
-    // Upload image first
-    console.log('Uploading image...');
-    const uploadResponse = await fetch('/api/upload', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageData: imageDataUrl }),
-    });
+    try {
+      console.log('Uploading image...');
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageData: imageDataUrl }),
+      });
 
-    if (!uploadResponse.ok) {
-      throw new Error('Upload failed');
-    }
+      if (!uploadResponse.ok) {
+        throw new Error('Upload failed');
+      }
 
-    const uploadData = await uploadResponse.json() as { imageUrl: string; directImageUrl: string };
-    console.log('Image uploaded:', uploadData);
+      const uploadData = await uploadResponse.json() as { imageUrl: string; directImageUrl: string };
+      console.log('Image uploaded:', uploadData);
 
-    // Make sure SDK is ready
-    await sdk.actions.ready();
-    console.log('SDK is ready');
+      await sdk.actions.ready();
+      console.log('SDK is ready');
 
-    // Check if composeCast is available
-    if (!sdk?.actions?.composeCast) {
-      console.error('SDK composeCast not available');
-      await navigator.clipboard.writeText(uploadData.directImageUrl);
-      setMessage({ type: 'error', text: 'URL copied to clipboard! Share manually.' });
+      if (!sdk?.actions?.composeCast) {
+        console.error('SDK composeCast not available');
+        await navigator.clipboard.writeText(uploadData.directImageUrl);
+        setMessage({ type: 'error', text: 'URL copied to clipboard! Share manually.' });
+        setIsSharing(false);
+        return;
+      }
+
+      const result = await sdk.actions.composeCast({
+        text: `Just created some glitch art on Base! ⚡`,
+        embeds: [uploadData.imageUrl],
+      });
+
+      console.log('Compose result:', result);
       setIsSharing(false);
-      return;
+
+      if (result?.cast) {
+        setMessage({ type: 'success', text: '✅ Shared on Based!' });
+        setTimeout(() => {
+          setMessage(null);
+          if (onSuccessfulPost) onSuccessfulPost();
+        }, 1500);
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+      setIsSharing(false);
+      setMessage({ type: 'error', text: 'Failed to share. Please try again.' });
+      setTimeout(() => setMessage(null), 3000);
     }
-
-    // Compose cast
-    const result = await sdk.actions.composeCast({
-      text: `Just created some glitch art on Base! ⚡`,
-      embeds: [uploadData.imageUrl],
-    });
-
-    console.log('Compose result:', result);
-    setIsSharing(false);
-
-    if (result?.cast) {
-      setMessage({ type: 'success', text: '✅ Shared on Based!' });
-      setTimeout(() => {
-        setMessage(null);
-        if (onSuccessfulPost) onSuccessfulPost();
-      }, 1500);
-    }
-  } catch (error) {
-    console.error('Share error:', error);
-    setIsSharing(false);
-    setMessage({ type: 'error', text: 'Failed to share. Please try again.' });
-    setTimeout(() => setMessage(null), 3000);
-  }
-};
+  };
 
   const handleWarpcastShare = async (): Promise<void> => {
-  console.log('Warpcast share clicked');
-  setMessage(null);
-  setIsSharing(true);
+    console.log('Warpcast share clicked');
+    setMessage(null);
+    setIsSharing(true);
 
-  try {
-    // Upload image
-    const uploadResponse = await fetch('/api/upload', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageData: imageDataUrl }),
-    });
+    try {
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageData: imageDataUrl }),
+      });
 
-    if (!uploadResponse.ok) throw new Error('Upload failed');
+      if (!uploadResponse.ok) throw new Error('Upload failed');
 
-    const uploadData = await uploadResponse.json() as { directImageUrl: string };
-    console.log('Image uploaded:', uploadData);
+      const uploadData = await uploadResponse.json() as { directImageUrl: string };
+      console.log('Image uploaded:', uploadData);
 
-    const text = encodeURIComponent(`Just created some glitch art on Base! ⚡`);
-    
-    // Use deep link on mobile, web URL on desktop
-    const warpcastUrl = isMobile
-      ? `farcaster://compose?text=${text}&embeds[]=${encodeURIComponent(uploadData.directImageUrl)}`
-      : `https://warpcast.com/~/compose?text=${text}&embeds[]=${encodeURIComponent(uploadData.directImageUrl)}`;
+      const text = encodeURIComponent(`Just created some glitch art on Base! ⚡`);
 
-    console.log('Opening:', warpcastUrl);
-    window.open(warpcastUrl, '_blank', 'noopener,noreferrer');
+      const warpcastUrl = isMobile
+        ? `farcaster://compose?text=${text}&embeds[]=${encodeURIComponent(uploadData.directImageUrl)}`
+        : `https://warpcast.com/~/compose?text=${text}&embeds[]=${encodeURIComponent(uploadData.directImageUrl)}`;
 
-    setMessage({ type: 'success', text: '✅ Opening Warpcast...' });
-    setTimeout(() => setMessage(null), 3000);
-    setIsSharing(false);
-  } catch (error) {
-    console.error('Warpcast share error:', error);
-    setIsSharing(false);
-    setMessage({ type: 'error', text: 'Failed to share. Please try again.' });
-    setTimeout(() => setMessage(null), 3000);
-  }
-};
+      console.log('Opening:', warpcastUrl);
+      window.open(warpcastUrl, '_blank', 'noopener,noreferrer');
 
-  // Show all action buttons simultaneously
+      setMessage({ type: 'success', text: '✅ Opening Warpcast...' });
+      setTimeout(() => setMessage(null), 3000);
+      setIsSharing(false);
+    } catch (error) {
+      console.error('Warpcast share error:', error);
+      setIsSharing(false);
+      setMessage({ type: 'error', text: 'Failed to share. Please try again.' });
+      setTimeout(() => setMessage(null), 3000);
+    }
+  };
+
   return (
     <>
       <div className="space-y-3 w-full">
-       {/* Mint as NFT button - only show when wallet connected and not yet minted */}
-        {address && !hasMintedNft && (
+        {/* Mint as NFT button - show when connected and not yet minted */}
+        {isConnected && !hasMintedNft && (
           <Button
             onClick={() => setIsMintModalOpen(true)}
             disabled={isSharing || !imageDataUrl}
@@ -167,7 +160,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
           </Button>
         )}
 
-      {/* Share on Based button - mobile only, only after mint */}
+        {/* Share on Based button - mobile only, only after mint */}
         {isMobile && hasMintedNft && (
           <Button
             onClick={handleBasedShare}
@@ -194,12 +187,12 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
             </span>
           </Button>
         )}
-        
+
         {message && (
-          <div 
-            className={`text-sm text-center p-3 rounded-lg ${ 
-              message.type === 'success' 
-                ? 'bg-green-500/20 text-green-100 border border-green-400/30' 
+          <div
+            className={`text-sm text-center p-3 rounded-lg ${
+              message.type === 'success'
+                ? 'bg-green-500/20 text-green-100 border border-green-400/30'
                 : 'bg-red-500/20 text-red-100 border border-red-400/30'
             }`}
           >

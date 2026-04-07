@@ -82,6 +82,16 @@ export default function GlitchStudio() {
     setHasImage(false);
   }, []);
 
+  const handleImageLoaded = useCallback((loaded: boolean) => {
+  console.log('📷 handleImageLoaded called:', loaded);
+  setHasImage(loaded);
+  // Reset mint state when new image is loaded
+  if (loaded) {
+    console.log('📷 New image loaded - resetting hasMintedNft to false');
+    sethasMintedNft(false);
+  }
+}, []);
+
   const handleEffectChange = useCallback((effectId: string, value: number) => {
     setEffectStates((prev) => ({
       ...prev,
