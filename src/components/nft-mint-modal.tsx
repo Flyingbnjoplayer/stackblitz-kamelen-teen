@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi';
+import { useWriteContract, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi';
+import { useFarcasterWallet } from '@/hooks/useFarcasterWallet';
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +26,7 @@ export function NFTMintModal({
   imageUrl,
   onMintSuccess,
 }: NFTMintModalProps) {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected } = useFarcasterWallet();
   const [nftName, setNftName] = useState<string>('');
   const [nftDescription, setNftDescription] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);

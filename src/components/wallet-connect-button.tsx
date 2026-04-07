@@ -1,19 +1,19 @@
-//stackblitz-kamelen-teen/src/components/wallet-connect-button.tsx
 'use client';
 
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { useEffect, useState, useRef } from 'react';
-import { sdk } from '@farcaster/miniapp-sdk';
 import { Button } from './ui/button';
 import { Wallet, LogOut, Loader2, ChevronDown } from 'lucide-react';
+import { useFarcasterWallet } from '@/hooks/useFarcasterWallet';
 
 export function WalletConnectButton() {
-  const { address, status } = useAccount();
+  const { address: wagmiAddress, status } = useAccount();
   const { connect, connectors, isPending, error: connectError } = useConnect();
   const { disconnect } = useDisconnect();
 
-  const [farcasterUsername, setFarcasterUsername] = useState<string | null>(null);
-  const [isInFarcaster, setIsInFarcaster] = useState(false);
+  // Use Farcaster-aware wallet hook
+  const { address, isInFarcaster, farcasterUsername } = useFarcasterWallet();
+
   const [showConnectors, setShowConnectors] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -31,32 +31,7 @@ export function WalletConnectButton() {
     }
   }, [showConnectors]);
 
-  // Farcaster context
-  useEffect(() => {
-    let cancelled = false;
-    async function checkFarcaster() {
-      try {
-        const inMiniApp = await sdk.isInMiniApp();
-        if (!cancelled) {
-          setIsInFarcaster(inMiniApp);
-          if (inMiniApp) {
-            const context = await sdk.context;
-            if (!cancelled && context?.user?.username) {
-              setFarcasterUsername(context.user.username);
-            }
-          }
-        }
-      } catch {
-        if (!cancelled) setIsInFarcaster(false);
-      }
-    }
-    checkFarcaster();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Connection errors (schedule state updates; avoid sync setState in effect)
+  // Connection errors
   useEffect(() => {
     if (!connectError) return;
 
@@ -73,7 +48,6 @@ export function WalletConnectButton() {
     })();
 
     let mounted = true;
-    // schedule on next tick to avoid "set-state-in-effect" lint
     const micro = setTimeout(() => {
       if (mounted) setConnectionError(msg);
     }, 0);
@@ -115,7 +89,7 @@ export function WalletConnectButton() {
         </div>
       </div>
     );
-    }
+  }
 
   // Connected inside Farcaster
   if (address && isInFarcaster) {

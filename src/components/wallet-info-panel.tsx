@@ -1,18 +1,19 @@
 'use client';
 
-import { useAccount, useBalance, useChainId } from 'wagmi';
+import { useBalance, useChainId } from 'wagmi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Wallet, TrendingUp } from 'lucide-react';
 import { base, baseSepolia } from 'wagmi/chains';
+import { useFarcasterWallet } from '@/hooks/useFarcasterWallet';
 
 export function WalletInfoPanel() {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, isInFarcaster } = useFarcasterWallet();
   const chainId = useChainId();
   
   // Use the currently connected chain for balance
   const { data: balance } = useBalance({
     address,
-    chainId: chainId || baseSepolia.id, // Default to Sepolia if no chain
+    chainId: chainId || baseSepolia.id,
   });
 
   if (!isConnected || !address) {
@@ -28,6 +29,9 @@ export function WalletInfoPanel() {
         <CardTitle className="flex items-center gap-2 text-white">
           <Wallet className="w-5 h-5 text-purple-400" />
           Wallet Info
+          {isInFarcaster && (
+            <span className="text-xs bg-purple-500/30 px-2 py-0.5 rounded-full">Farcaster</span>
+          )}
         </CardTitle>
         <CardDescription className="text-blue-100">
           Your connected wallet
