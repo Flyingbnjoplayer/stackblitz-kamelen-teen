@@ -10,8 +10,7 @@ export function useIsInFarcaster(): boolean {
 
     const checkFarcasterContext = async (): Promise<void> => {
       try {
-        // Wait for SDK to be ready first
-        await sdk.actions.ready()
+        
         
         // Use isInMiniApp() for reliable detection of embedded webview
         const inMiniApp = await sdk.isInMiniApp()

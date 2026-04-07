@@ -5,6 +5,7 @@ import { ResponseLogger } from "../components/response-logger";
 import { Providers } from "./providers";
 import FarcasterWrapper from "../components/FarcasterWrapper";
 import { Toaster } from "../components/ui/sonner";
+import { FarcasterSdkReady } from "../components/FarcasterSdkReady";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,11 +43,13 @@ export default function RootLayout({
     <html lang="en">
       <head></head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers>
-          <FarcasterWrapper>
-            {children}
-          </FarcasterWrapper>
-        </Providers>
+        <FarcasterSdkReady>
+          <Providers>
+            <FarcasterWrapper>
+              {children}
+            </FarcasterWrapper>
+          </Providers>
+        </FarcasterSdkReady>
         <Toaster />
         <ResponseLogger />
       </body>
