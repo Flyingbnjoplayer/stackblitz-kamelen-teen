@@ -178,6 +178,18 @@ export function NFTMintModal({
 
   const isMinting = isUploading || isWriting || isConfirming;
 
+  // Debug logging
+  console.log('🔧 NFTMintModal render:', {
+    isOpen,
+    hasImageUrl: !!imageUrl,
+    address,
+    isConnected,
+    isMinting,
+    isUploading,
+    isWriting,
+    isConfirming
+  });
+  
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-gray-900 border-purple-500/30 text-white">
