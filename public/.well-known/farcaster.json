@@ -4,12 +4,6 @@
     "payload": "eyJkb21haW4iOiJodHRwczovL3N0YWNrYmxpdHota2FtZWxlbi10ZWVuLnZlcmNlbC5hcHAifQ",
     "signature": "XDjqjCVx/v/FjNj6473Ls59VbO6BOFpn9fClDVWNNj0VAXNcotmS5f389W2ehbvJ83pG4PVjKeChbYyRtcUFXBw="
   },
-  "baseBuilder": {
-    "name": "Glitch NFT Studio",
-    "description": "Create glitch art and mint as NFTs on Base",
-    "icon": "https://stackblitz-kamelen-teen.vercel.app/favicon.ico",
-    "url": "https://stackblitz-kamelen-teen.vercel.app"
-  },
   "frame": {
     "version": "next",
     "imageUrl": "https://stackblitz-kamelen-teen.vercel.app/og-image.png",
