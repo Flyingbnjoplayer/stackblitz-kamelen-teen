@@ -37,6 +37,7 @@ const { switchChain } = useSwitchChain();
 const chainId = useChainId();
 
 // Add this inside the GlitchStudio component
+// Debug: Check Farcaster SDK context
 useEffect(() => {
   const debugFarcaster = async () => {
     try {
@@ -47,7 +48,6 @@ useEffect(() => {
         const context = await sdk.context
         console.log('🔍 Full SDK context:', JSON.stringify(context, null, 2))
         console.log('🔍 context.user:', context?.user)
-        console.log('🔍 context.user.custody:', context?.user?.custody)
         
         // Try getting wallet address
         try {
@@ -74,7 +74,7 @@ useEffect(() => {
     }
   }
   debugFarcaster()
-}, []);
+}, [])
 // Auto-switch to Base Sepolia when wallet connects
 useEffect(() => {
   if (isConnected && chainId !== baseSepolia.id) {
