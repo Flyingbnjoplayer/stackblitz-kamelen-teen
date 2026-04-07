@@ -241,9 +241,8 @@ export function NFTMintModal({
           </div>
         </div>
 
-{/* DEBUG: Check if buttons render */}
-        {console.log('🔧 Rendering DialogFooter, isMinting:', isMinting, 'isConnected:', isConnected)}
-        
+
+
         <DialogFooter className="flex-col sm:flex-row gap-2">
           <Button
             variant="outline"
