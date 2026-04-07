@@ -182,14 +182,17 @@ export function NFTMintModal({
   console.log('🔧 NFTMintModal render:', {
     isOpen,
     hasImageUrl: !!imageUrl,
+    imageUrlLength: imageUrl?.length,
     address,
     isConnected,
     isMinting,
     isUploading,
     isWriting,
-    isConfirming
+    isConfirming,
+    shouldShowButton: !isMinting || isConnected
   });
-  
+
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-gray-900 border-purple-500/30 text-white">
@@ -238,6 +241,9 @@ export function NFTMintModal({
           </div>
         </div>
 
+{/* DEBUG: Check if buttons render */}
+        {console.log('🔧 Rendering DialogFooter, isMinting:', isMinting, 'isConnected:', isConnected)}
+        
         <DialogFooter className="flex-col sm:flex-row gap-2">
           <Button
             variant="outline"
