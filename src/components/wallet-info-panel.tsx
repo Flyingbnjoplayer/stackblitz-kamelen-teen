@@ -1,20 +1,26 @@
 'use client';
 
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useChainId } from 'wagmi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Wallet, TrendingUp } from 'lucide-react';
-import { base } from 'wagmi/chains';
+import { base, baseSepolia } from 'wagmi/chains';
 
 export function WalletInfoPanel() {
   const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  
+  // Use the currently connected chain for balance
   const { data: balance } = useBalance({
     address,
-    chainId: base.id,
+    chainId: chainId || baseSepolia.id, // Default to Sepolia if no chain
   });
 
   if (!isConnected || !address) {
     return null;
   }
+
+  // Determine chain name
+  const chainName = chainId === base.id ? 'Base' : chainId === baseSepolia.id ? 'Base Sepolia' : 'Unknown';
 
   return (
     <Card className="bg-gradient-to-br from-purple-900/80 to-blue-900/80 border-2 border-purple-400/30 backdrop-blur-sm">
@@ -24,7 +30,7 @@ export function WalletInfoPanel() {
           Wallet Info
         </CardTitle>
         <CardDescription className="text-blue-100">
-          Your Base Network balance
+          Your connected wallet
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -37,7 +43,7 @@ export function WalletInfoPanel() {
           </div>
           <div className="text-right">
             <p className="text-xs text-blue-200 mb-1">Network</p>
-            <p className="text-sm text-white font-bold">Base</p>
+            <p className="text-sm text-white font-bold">{chainName}</p>
           </div>
         </div>
 
