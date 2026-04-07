@@ -35,6 +35,45 @@ export default function GlitchStudio() {
 const { switchChain } = useSwitchChain();
 const chainId = useChainId();
 
+// Add this inside the GlitchStudio component
+useEffect(() => {
+  const debugFarcaster = async () => {
+    try {
+      const inMiniApp = await sdk.isInMiniApp()
+      console.log('🔍 isInMiniApp:', inMiniApp)
+      
+      if (inMiniApp) {
+        const context = await sdk.context
+        console.log('🔍 Full SDK context:', JSON.stringify(context, null, 2))
+        console.log('🔍 context.user:', context?.user)
+        console.log('🔍 context.user.custody:', context?.user?.custody)
+        
+        // Try getting wallet address
+        try {
+          const wallet = await sdk.wallet
+          console.log('🔍 sdk.wallet:', wallet)
+        } catch (e) {
+          console.log('🔍 sdk.wallet error:', e)
+        }
+        
+        // Try getting signer address
+        try {
+          const signer = await sdk.wallet.getEthereumSigner?.()
+          console.log('🔍 ethereum signer:', signer)
+          if (signer?.getAddress) {
+            const addr = await signer.getAddress()
+            console.log('🔍 signer address:', addr)
+          }
+        } catch (e) {
+          console.log('🔍 signer error:', e)
+        }
+      }
+    } catch (e) {
+      console.log('🔍 Debug error:', e)
+    }
+  }
+  debugFarcaster()
+}, []);
 // Auto-switch to Base Sepolia when wallet connects
 useEffect(() => {
   if (isConnected && chainId !== baseSepolia.id) {
