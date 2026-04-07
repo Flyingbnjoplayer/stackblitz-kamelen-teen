@@ -129,35 +129,30 @@ export default function FarcasterManifestSigner({
     let cancelled = false;
 
     const checkAndSignManifest = async (): Promise<void> => {
-  try {
-    if (isCheckingSignedStatus) return;
+      try {
+        if (isCheckingSignedStatus) return;
 
-    // Initialize Farcaster SDK first
-    try {
-      await sdk.actions.ready();
-    } catch (e) {
-      // Not in Farcaster context - continue anyway
-      console.log('SDK ready check:', e);
-    }
+        // small delay to allow environment init
+        await new Promise((resolve) => setTimeout(resolve, 200));
 
-    // small delay to allow environment init
-    await new Promise((resolve) => setTimeout(resolve, 200));
+        const inMiniApp = await sdk.isInMiniApp();
+        if (cancelled) return;
 
-    const inMiniApp = await sdk.isInMiniApp();
-    if (cancelled) return;
+        setIsMiniApp(inMiniApp);
 
-    setIsMiniApp(inMiniApp);
-
-    if (inMiniApp && !isAlreadySigned) {
-      await signManifest();
-    }
-  } catch (e) {
-    console.error('Error checking Mini App context:', e);
-    if (!cancelled) setIsMiniApp(false);
-  } finally {
-    if (!cancelled) setIsCheckingEnvironment(false);
-  }
-};
+        if (inMiniApp && !isAlreadySigned) {
+          await signManifest();
+        } else if (isAlreadySigned) {
+          // already signed; no-op
+          // console.log('Manifest already signed, skipping');
+        }
+      } catch (e) {
+        console.error('Error checking Mini App context:', e);
+        if (!cancelled) setIsMiniApp(false);
+      } finally {
+        if (!cancelled) setIsCheckingEnvironment(false);
+      }
+    };
 
     checkAndSignManifest();
     return () => {
