@@ -9,7 +9,7 @@ import { ShareButtons } from '@/components/share-buttons';
 import { useAccount, useSwitchChain, useChainId } from 'wagmi';
 import { useQuickAuth } from '@/hooks/useQuickAuth';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
-import { Download, RotateCcw, Upload, ImageOff } from 'lucide-react';
+import { Download, ImageOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { baseSepolia } from 'viem/chains';
 import { sdk } from '@farcaster/miniapp-sdk';
@@ -40,22 +40,22 @@ export default function GlitchStudio() {
   useEffect(() => {
     const debugFarcaster = async () => {
       try {
-        const inMiniApp = await sdk.isInMiniApp()
-        console.log('🔍 isInMiniApp:', inMiniApp)
+        const inMiniApp = await sdk.isInMiniApp();
+        console.log('🔍 isInMiniApp:', inMiniApp);
 
         if (inMiniApp) {
-          const context = await sdk.context
-          console.log('🔍 Full SDK context:', context)
-          console.log('🔍 context.user:', context?.user)
-          console.log('🔍 context.user fid:', context?.user?.fid)
-          console.log('🔍 context.user username:', context?.user?.username)
+          const context = await sdk.context;
+          console.log('🔍 Full SDK context:', context);
+          console.log('🔍 context.user:', context?.user);
+          console.log('🔍 context.user fid:', context?.user?.fid);
+          console.log('🔍 context.user username:', context?.user?.username);
         }
       } catch (e) {
-        console.log('🔍 Debug error:', e)
+        console.log('🔍 Debug error:', e);
       }
-    }
-    debugFarcaster()
-  }, [])
+    };
+    debugFarcaster();
+  }, []);
 
   // Auto-switch to Base Sepolia when wallet connects
   useEffect(() => {
@@ -76,21 +76,12 @@ export default function GlitchStudio() {
 
   // Change image - clears image AND resets mint state
   const handleChangeImage = useCallback(() => {
+    console.log('🔄 handleChangeImage called - resetting mint state');
     setResetTrigger((prev) => prev + 1);
     sethasMintedNft(false);
     setEditedImage(null);
     setHasImage(false);
   }, []);
-
-  const handleImageLoaded = useCallback((loaded: boolean) => {
-  console.log('📷 handleImageLoaded called:', loaded);
-  setHasImage(loaded);
-  // Reset mint state when new image is loaded
-  if (loaded) {
-    console.log('📷 New image loaded - resetting hasMintedNft to false');
-    sethasMintedNft(false);
-  }
-}, []);
 
   const handleEffectChange = useCallback((effectId: string, value: number) => {
     setEffectStates((prev) => ({
@@ -108,9 +99,11 @@ export default function GlitchStudio() {
   }, []);
 
   const handleImageLoaded = useCallback((loaded: boolean) => {
+    console.log('📷 handleImageLoaded called:', loaded);
     setHasImage(loaded);
     // Reset mint state when new image is loaded
     if (loaded) {
+      console.log('📷 New image loaded - resetting hasMintedNft to false');
       sethasMintedNft(false);
     }
   }, []);
