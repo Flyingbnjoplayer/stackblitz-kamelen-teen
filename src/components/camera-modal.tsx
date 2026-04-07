@@ -112,7 +112,7 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
 
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
       if (!ctx) {
         setIsCapturing(false);
         return;

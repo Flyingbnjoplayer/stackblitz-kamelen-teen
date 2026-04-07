@@ -73,7 +73,7 @@ export function GlitchEditor({ effectStates, onImageProcessed, onImageLoaded, re
     if (!canvasRef.current || !originalImage) return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
     let imageData = new ImageData(
@@ -146,7 +146,7 @@ export function GlitchEditor({ effectStates, onImageProcessed, onImageLoaded, re
       canvas.width = width;
       canvas.height = height;
 
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
       if (!ctx) {
         console.error('Failed to get canvas context');
         return;
