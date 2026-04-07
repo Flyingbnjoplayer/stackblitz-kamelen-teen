@@ -52,6 +52,8 @@ export function GlitchEditor({ effectStates, onImageProcessed, onImageLoaded, re
 
   useEffect(() => {
     if (resetTrigger !== undefined && resetTrigger > 0) {
+       console.log('📷 resetTrigger effect running, resetTrigger:', resetTrigger);
+
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }
@@ -63,7 +65,7 @@ export function GlitchEditor({ effectStates, onImageProcessed, onImageLoaded, re
       setPreviewUrl(null);
       setIsLoadingImage(false);
       
-      console.log('Editor reset triggered');
+      console.log('📷 Editor reset complete');
     }
   }, [resetTrigger, previewUrl]);
 
@@ -100,81 +102,83 @@ export function GlitchEditor({ effectStates, onImageProcessed, onImageLoaded, re
   }, [processImage]);
 
   const loadImageToEditor = (file: File): void => {
-    if (!file) {
-      console.error('No file provided');
-      return;
-    }
-    
-    if (!file.type.startsWith('image/')) {
-      console.error('Invalid file type:', file.type);
+  if (!file) {
+    console.error('No file provided');
+    return;
+  }
+
+  if (!file.type.startsWith('image/')) {
+    console.error('Invalid file type:', file.type);
+    return;
+  }
+
+  console.log('📷 loadImageToEditor called:', file.name, file.size);
+
+  const reader = new FileReader();
+  reader.onload = (e: ProgressEvent<FileReader>): void => {
+    const result = e.target?.result;
+    if (!result || typeof result !== 'string') {
+      console.error('Failed to read file result');
       return;
     }
 
-    console.log('Loading image file:', file.name, file.size);
-    
-    const reader = new FileReader();
-    reader.onload = (e: ProgressEvent<FileReader>): void => {
-      const result = e.target?.result;
-      if (!result || typeof result !== 'string') {
-        console.error('Failed to read file result');
+    console.log('📷 FileReader loaded, creating image element');
+    const img = document.createElement('img');
+    img.onload = (): void => {
+      console.log('📷 Image loaded successfully:', img.width, 'x', img.height);
+      const canvas = canvasRef.current;
+      if (!canvas) {
+        console.error('Canvas ref not available');
         return;
       }
 
-      console.log('FileReader loaded, creating image element');
-      const img = document.createElement('img');
-      img.onload = (): void => {
-        console.log('Image loaded successfully:', img.width, 'x', img.height);
-        const canvas = canvasRef.current;
-        if (!canvas) {
-          console.error('Canvas ref not available');
-          return;
-        }
+      const maxWidth = 1200;
+      const maxHeight = 1200;
+      let width = img.width;
+      let height = img.height;
 
-        const maxWidth = 1200;
-        const maxHeight = 1200;
-        let width = img.width;
-        let height = img.height;
+      if (width > maxWidth || height > maxHeight) {
+        const ratio = Math.min(maxWidth / width, maxHeight / height);
+        width = Math.floor(width * ratio);
+        height = Math.floor(height * ratio);
+      }
 
-        if (width > maxWidth || height > maxHeight) {
-          const ratio = Math.min(maxWidth / width, maxHeight / height);
-          width = Math.floor(width * ratio);
-          height = Math.floor(height * ratio);
-        }
+      canvas.width = width;
+      canvas.height = height;
 
-        canvas.width = width;
-        canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error('Failed to get canvas context');
+        return;
+      }
 
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          console.error('Failed to get canvas context');
-          return;
-        }
+      ctx.drawImage(img, 0, 0, width, height);
+      const imageData = ctx.getImageData(0, 0, width, height);
+      setOriginalImage(imageData);
+      setHasImage(true);
+      setIsLoadingImage(false);
+      
+      console.log('📷 Calling onImageLoaded(true)');
+      onImageLoaded?.(true);
 
-        ctx.drawImage(img, 0, 0, width, height);
-        const imageData = ctx.getImageData(0, 0, width, height);
-        setOriginalImage(imageData);
-        setHasImage(true);
-        setIsLoadingImage(false);
-        onImageLoaded?.(true);
-        
-        console.log('Image set successfully in editor');
-      };
-
-      img.onerror = (error): void => {
-        console.error('Failed to load image:', error);
-        setIsLoadingImage(false);
-      };
-
-      img.src = result;
+      console.log('📷 Image set successfully in editor');
     };
 
-    reader.onerror = (error): void => {
-      console.error('Failed to read file:', error);
+    img.onerror = (error): void => {
+      console.error('Failed to load image:', error);
       setIsLoadingImage(false);
     };
 
-    reader.readAsDataURL(file);
+    img.src = result;
   };
+
+  reader.onerror = (error): void => {
+    console.error('Failed to read file:', error);
+    setIsLoadingImage(false);
+  };
+
+  reader.readAsDataURL(file);
+};
 
   const handleFileSelect = (file: File): void => {    
     console.log('File selected, loading directly to editor');
@@ -183,7 +187,7 @@ export function GlitchEditor({ effectStates, onImageProcessed, onImageLoaded, re
   };
 
   const handleCameraCapture = (file: File): void => {
-    console.log('Camera capture received, loading image directly');
+    console.log('📷 handleCameraCapture called');
     setIsLoadingImage(true);
     loadImageToEditor(file);
   };
