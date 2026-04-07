@@ -9,7 +9,7 @@ import { ShareButtons } from '@/components/share-buttons';
 import { useAccount, useSwitchChain, useChainId } from 'wagmi';
 import { useQuickAuth } from '@/hooks/useQuickAuth';
 import { useIsInFarcaster } from '@/hooks/useIsInFarcaster';
-import { Download, RotateCcw, Upload } from 'lucide-react';
+import { Download, RotateCcw, Upload, ImageOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { baseSepolia } from 'viem/chains';
 import { sdk } from '@farcaster/miniapp-sdk';
@@ -31,39 +31,56 @@ export default function GlitchStudio() {
   const [resetTrigger, setResetTrigger] = useState(0);
   const [hasImage, setHasImage] = useState(false);
   const [hasMintedNft, sethasMintedNft] = useState(false);
-  const [lockEffects, setLockEffects] = useState(false); 
+  const [lockEffects, setLockEffects] = useState(false);
   const { isConnected } = useAccount();
-const { switchChain } = useSwitchChain();
-const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
+  const chainId = useChainId();
 
-// Debug: Check Farcaster SDK context
-useEffect(() => {
-  const debugFarcaster = async () => {
-    try {
-      const inMiniApp = await sdk.isInMiniApp()
-      console.log('🔍 isInMiniApp:', inMiniApp)
-      
-      if (inMiniApp) {
-        const context = await sdk.context
-        console.log('🔍 Full SDK context:', context)
-        console.log('🔍 context.user:', context?.user)
-        console.log('🔍 context.user fid:', context?.user?.fid)
-        console.log('🔍 context.user username:', context?.user?.username)
+  // Debug: Check Farcaster SDK context
+  useEffect(() => {
+    const debugFarcaster = async () => {
+      try {
+        const inMiniApp = await sdk.isInMiniApp()
+        console.log('🔍 isInMiniApp:', inMiniApp)
+
+        if (inMiniApp) {
+          const context = await sdk.context
+          console.log('🔍 Full SDK context:', context)
+          console.log('🔍 context.user:', context?.user)
+          console.log('🔍 context.user fid:', context?.user?.fid)
+          console.log('🔍 context.user username:', context?.user?.username)
+        }
+      } catch (e) {
+        console.log('🔍 Debug error:', e)
       }
-    } catch (e) {
-      console.log('🔍 Debug error:', e)
     }
-  }
-  debugFarcaster()
-}, [])
-// Auto-switch to Base Sepolia when wallet connects
-useEffect(() => {
-  if (isConnected && chainId !== baseSepolia.id) {
-    switchChain?.({ chainId: baseSepolia.id });
-  }
-}, [isConnected, chainId, switchChain]);
+    debugFarcaster()
+  }, [])
+
+  // Auto-switch to Base Sepolia when wallet connects
+  useEffect(() => {
+    if (isConnected && chainId !== baseSepolia.id) {
+      switchChain?.({ chainId: baseSepolia.id });
+    }
+  }, [isConnected, chainId, switchChain]);
+
   const isInFarcaster = useIsInFarcaster();
   useQuickAuth(isInFarcaster);
+
+  // Reset effects ONLY - does NOT clear image or mint state
+  const handleResetEffects = useCallback(() => {
+    if (!lockEffects) {
+      setEffectStates(defaultEffects);
+    }
+  }, [lockEffects]);
+
+  // Change image - clears image AND resets mint state
+  const handleChangeImage = useCallback(() => {
+    setResetTrigger((prev) => prev + 1);
+    sethasMintedNft(false);
+    setEditedImage(null);
+    setHasImage(false);
+  }, []);
 
   const handleEffectChange = useCallback((effectId: string, value: number) => {
     setEffectStates((prev) => ({
@@ -71,16 +88,6 @@ useEffect(() => {
       [effectId]: value,
     }));
   }, []);
-
-  const handleReset = useCallback(() => {
-    if (lockEffects) {
-      // Keep current effect values, just reset the trigger
-      setResetTrigger((prev) => prev + 1);
-    } else {
-      setEffectStates(defaultEffects);
-      setResetTrigger((prev) => prev + 1);
-    }
-  }, [lockEffects]);
 
   const handleToggleLock = useCallback(() => {
     setLockEffects((prev) => !prev);
@@ -131,7 +138,7 @@ useEffect(() => {
           <p className="text-gray-400">Create stunning glitch effects & mint as NFTs on Base</p>
         </header>
 
-       {/* Instruction Guide */}
+        {/* Instruction Guide */}
         {!hasImage && (
           <div className="bg-black/30 rounded-lg p-4 mb-6 max-w-md mx-auto text-center">
             <p className="text-sm text-gray-300 mb-2">How it works:</p>
@@ -157,22 +164,26 @@ useEffect(() => {
               resetTrigger={resetTrigger}
             />
 
-            {/* Action Buttons - Only show after mint */}
-            {hasImage && editedImage && hasMintedNft && (
+            {/* Action Buttons - Show after image is loaded */}
+            {hasImage && editedImage && (
               <div className="flex flex-wrap gap-3 justify-center">
+                {/* Download button - show after mint */}
+                {hasMintedNft && (
+                  <Button
+                    onClick={handleDownload}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download
+                  </Button>
+                )}
+                {/* Change Image button - always show when image is loaded */}
                 <Button
-                  onClick={handleDownload}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
-                <Button
-                  onClick={handleReset}
+                  onClick={handleChangeImage}
                   variant="outline"
-                  className="border-black text-black hover:bg-black/10 bg-white"
+                  className="border-white/30 text-white hover:bg-white/10"
                 >
-                  <RotateCcw className="w-4 h-4 mr-2" />
+                  <ImageOff className="w-4 h-4 mr-2" />
                   Change Image
                 </Button>
               </div>
@@ -200,7 +211,7 @@ useEffect(() => {
             <GlitchControls
               effectStates={effectStates}
               onEffectChange={handleEffectChange}
-              onReset={handleReset}
+              onReset={handleResetEffects}
               lockEffects={lockEffects}
               onToggleLock={handleToggleLock}
             />
