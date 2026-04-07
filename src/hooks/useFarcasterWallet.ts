@@ -1,24 +1,23 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useEffect, useState, useCallback } from 'react'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { sdk } from '@farcaster/miniapp-sdk'
 
-/**
- * Hook to manage Farcaster wallet connection.
- * Disconnects other wallets when Farcaster wallet is active.
- */
 export function useFarcasterWallet() {
   const { address, isConnected, connector } = useAccount()
+  const { connect, connectors } = useConnect()
   const { disconnect } = useDisconnect()
-  const [farcasterAddress, setFarcasterAddress] = useState<`0x${string}` | null>(null)
+  
   const [isInFarcaster, setIsInFarcaster] = useState(false)
   const [farcasterUsername, setFarcasterUsername] = useState<string | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
 
+  // Check if we're in Farcaster context
   useEffect(() => {
     let mounted = true
 
-    const initFarcasterWallet = async () => {
+    const checkFarcasterContext = async () => {
       try {
         const inMiniApp = await sdk.isInMiniApp()
         
@@ -31,51 +30,74 @@ export function useFarcasterWallet() {
           const context = await sdk.context
           
           if (mounted && context?.user) {
-            // Set username
             if (context.user.username) {
               setFarcasterUsername(context.user.username)
-            }
-            
-            // Get wallet address from context
-            // The custody address is the user's Farcaster wallet
-            if (context.user.custody) {
-              setFarcasterAddress(context.user.custody as `0x${string}`)
             }
           }
         }
       } catch (error) {
         console.log('Not in Farcaster context:', error)
+      } finally {
+        if (mounted) setIsInitialized(true)
       }
     }
 
-    initFarcasterWallet()
+    checkFarcasterContext()
 
     return () => {
       mounted = false
     }
   }, [])
 
-  // Disconnect non-Farcaster wallets when in Farcaster context
+  // In Farcaster context: ensure Farcaster connector is active
   useEffect(() => {
-    if (isInFarcaster && isConnected && connector) {
-      // If connected to a non-Farcaster connector, disconnect it
-      if (connector.id !== 'farcaster' && connector.name !== 'Farcaster') {
-        console.log('Disconnecting non-Farcaster wallet:', connector.name)
+    if (!isInitialized || !isInFarcaster) return
+
+    const ensureFarcasterConnector = async () => {
+      // If connected but NOT to Farcaster connector, disconnect and reconnect
+      if (isConnected && connector && connector.id !== 'farcaster') {
+        console.log('🔄 Wrong connector active:', connector.id, '- switching to Farcaster')
+        
+        // Disconnect current connector
         disconnect()
+        
+        // Wait a moment for disconnect to complete
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
+        // Find Farcaster connector and connect
+        const farcasterConn = connectors.find(c => c.id === 'farcaster')
+        if (farcasterConn) {
+          try {
+            await connect({ connector: farcasterConn })
+            console.log('✅ Connected to Farcaster wallet')
+          } catch (e) {
+            console.error('Failed to connect Farcaster wallet:', e)
+          }
+        }
+      }
+      
+      // If not connected at all in Farcaster context, connect Farcaster wallet
+      if (!isConnected) {
+        const farcasterConn = connectors.find(c => c.id === 'farcaster')
+        if (farcasterConn) {
+          try {
+            await connect({ connector: farcasterConn })
+            console.log('✅ Connected to Farcaster wallet')
+          } catch (e) {
+            console.error('Failed to connect Farcaster wallet:', e)
+          }
+        }
       }
     }
-  }, [isInFarcaster, isConnected, connector, disconnect])
 
-  // Return Farcaster address when in Farcaster context, otherwise wagmi address
-  const activeAddress = isInFarcaster && farcasterAddress 
-    ? farcasterAddress 
-    : address
+    ensureFarcasterConnector()
+  }, [isInitialized, isInFarcaster, isConnected, connector, connectors, connect, disconnect])
 
   return {
-    address: activeAddress,
-    isConnected: isInFarcaster ? !!farcasterAddress : isConnected,
+    address,
+    isConnected: isInFarcaster ? isConnected : isConnected,
     isInFarcaster,
     farcasterUsername,
-    farcasterAddress,
+    isInitialized,
   }
 }
