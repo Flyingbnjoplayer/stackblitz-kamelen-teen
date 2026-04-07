@@ -13,7 +13,7 @@ const ALCHEMY_MAINNET_URL = process.env.ALCHEMY_BASE_MAINNET_HTTP || 'https://ma
 export const config = createConfig({
   chains: [baseSepolia, base],
   connectors: [
-    farcasterConnector(), // <-- Add this FIRST - prioritizes Farcaster wallet
+    farcasterConnector(),
     coinbaseWallet({
       appName: 'Glitch Editor - Base',
       preference: 'all',
@@ -30,6 +30,7 @@ export const config = createConfig({
     [base.id]: http(ALCHEMY_MAINNET_URL),
   },
   ssr: false,
+  multiInjectedProvidersDiscovery: false, // Disable auto-discovery of injected wallets
 });
 
 export const queryClient = new QueryClient({
