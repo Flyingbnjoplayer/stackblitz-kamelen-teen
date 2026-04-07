@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ResponseLogger } from "../components/response-logger";
-import { ReadyNotifier } from "../components/ready-notifier";
 import { Providers } from "./providers";
 import FarcasterWrapper from "../components/FarcasterWrapper";
 import { Toaster } from "../components/ui/sonner";
@@ -16,6 +15,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
 export const metadata: Metadata = {
   title: "Glitch NFT Studio",
   description: "Create, mint as NFT, and share retro glitch art as NFTs on Base. Real-time effects including RGB split, VHS distortion, and more. Mint your creations and share on farcaster.",
@@ -42,7 +42,6 @@ export default function RootLayout({
     <html lang="en">
       <head></head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ReadyNotifier />
         <Providers>
           <FarcasterWrapper>
             {children}
