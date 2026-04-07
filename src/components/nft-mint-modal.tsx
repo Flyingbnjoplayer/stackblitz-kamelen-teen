@@ -195,7 +195,7 @@ export function NFTMintModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md bg-gray-900 border-purple-500/30 text-white">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto bg-gray-900 border-purple-500/30 text-white">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Mint Your Glitch Art
