@@ -207,6 +207,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
 
       {/* NFT Mint Modal */}
       <NFTMintModal
+        key={imageDataUrl}  // Force remount when image changes
         isOpen={isMintModalOpen}
         onClose={() => setIsMintModalOpen(false)}
         imageUrl={imageDataUrl}

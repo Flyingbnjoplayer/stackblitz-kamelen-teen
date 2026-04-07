@@ -1,10 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useWriteContract, useWaitForTransactionReceipt, useSwitchChain, useChainId } from 'wagmi';
 import { useFarcasterWallet } from '@/hooks/useFarcasterWallet';
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,33 +32,57 @@ export function NFTMintModal({
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [metadataUri, setMetadataUri] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
+  const hasCalledSuccess = useRef(false);  // Guard against double calls
   const { switchChain } = useSwitchChain();
   const { writeContract, isPending: isWriting } = useWriteContract();
- 
+
   const { switchChainAsync } = useSwitchChain();
   const chainId = useChainId();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: txHash,
-    });
-  
-    // Restore pending transaction on mount (survives app restart when returning from wallet)
-useEffect(() => {
-  const pendingTx = localStorage.getItem('pendingMintTx');
-  if (pendingTx) {
-    setTxHash(pendingTx as `0x${string}`);
-    localStorage.removeItem('pendingMintTx');
-  }
-}, []);
+  });
 
-  // Reset state when modal opens
+  // Restore pending transaction on mount
+  useEffect(() => {
+    const pendingTx = localStorage.getItem('pendingMintTx');
+    if (pendingTx) {
+      setTxHash(pendingTx as `0x${string}`);
+      localStorage.removeItem('pendingMintTx');
+    }
+  }, []);
+
+  // Reset state when modal opens OR when imageUrl changes
   useEffect(() => {
     if (isOpen) {
       setNftName('');
       setNftDescription('');
       setMetadataUri(null);
       setTxHash(undefined);
+      hasCalledSuccess.current = false;  // Reset guard
+    }
+  }, [isOpen, imageUrl]);
+
+  // Reset when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      hasCalledSuccess.current = false;
     }
   }, [isOpen]);
+
+  // Handle successful confirmation
+  useEffect(() => {
+    if (isConfirmed && txHash && !hasCalledSuccess.current) {
+      hasCalledSuccess.current = true;  // Set guard immediately
+      setTxHash(undefined);
+      toast.success('NFT minted successfully!', { id: 'mint-toast' });
+      if (onMintSuccess) onMintSuccess();
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    }
+  }, [isConfirmed, txHash, onMintSuccess, onClose]);
+
+  
 
   // Handle successful confirmation
   // Handle successful confirmation

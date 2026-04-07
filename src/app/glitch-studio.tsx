@@ -36,6 +36,11 @@ export default function GlitchStudio() {
   const { switchChain } = useSwitchChain();
   const chainId = useChainId();
 
+    // Add this after the state declarations
+useEffect(() => {
+  console.log('📊 hasMintedNft state changed to:', hasMintedNft);
+}, [hasMintedNft]);
+
   // Debug: Check Farcaster SDK context
   useEffect(() => {
     const debugFarcaster = async () => {
@@ -120,6 +125,8 @@ export default function GlitchStudio() {
   };
 
   const handleMintSuccess = useCallback(() => {
+    console.log('🎯 handleMintSuccess called - setting hasMintedNft to true');
+    console.trace('Stack trace for handleMintSuccess');
     sethasMintedNft(true);
   }, []);
 
@@ -195,6 +202,7 @@ export default function GlitchStudio() {
             {/* Share Buttons */}
             {editedImage && (
               <ShareButtons
+                key={editedImage}  // Force remount when image changes
                 imageDataUrl={editedImage}
                 onMintSuccess={handleMintSuccess}
                 onSuccessfulPost={handleSuccessfulPost}
