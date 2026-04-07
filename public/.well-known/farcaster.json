@@ -1,8 +1,8 @@
 {
   "accountAssociation": {
-    "header": "",
-    "payload": "",
-    "signature": ""
+    "header": "eyJmaWQiOjM1NjAxOSwidHlwZSI6ImF1dGgiLCJrZXkiOiIweDY5MWNENjQxNDk0MThhZjk4QzQ1N2Y3NTRmYjlGNTU2Q2IwODEwNmEifQ",
+    "payload": "eyJkb21haW4iOiJodHRwczovL3N0YWNrYmxpdHota2FtZWxlbi10ZWVuLnZlcmNlbC5hcHAifQ",
+    "signature": "XDjqjCVx/v/FjNj6473Ls59VbO6BOFpn9fClDVWNNj0VAXNcotmS5f389W2ehbvJ83pG4PVjKeChbYyRtcUFXBw="
   },
   "baseBuilder": {
     "name": "Glitch NFT Studio",
