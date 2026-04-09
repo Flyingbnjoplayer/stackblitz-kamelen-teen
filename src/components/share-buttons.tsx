@@ -17,7 +17,7 @@ export type ShareButtonsProps = {
   hasMintedNft?: boolean;
 };
 
-export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSuccess, onImageChange, hasMintedNft }: ShareButtonsProps) {
+export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSuccess, onImageChange, hasMintedNft: externalHasMintedNft }: ShareButtonsProps) {
   console.log('🎨 ShareButtons render - hasMintedNft:', hasMintedNft);
   
   const [isSharing, setIsSharing] = useState(false);
@@ -67,7 +67,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   // Debug logging
   console.log('🔧 ShareButtons state:', {
     isMintModalOpen,
-    hasMintedNft,
+    hasMintedNft: externalHasMintedNft,
     isConnected,
     imageDataUrlLength: imageDataUrl?.length
   });
@@ -167,7 +167,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
     <>
       <div className="space-y-3 w-full">
         {/* Mint as NFT button - show when connected and not yet minted */}
-        {isConnected && !hasMintedNft && (
+        {isConnected && !externalHasMintedNft && (
           <Button
             onClick={() => {
               console.log('🔧 Opening mint modal, current isMintModalOpen:', isMintModalOpen);
@@ -182,7 +182,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
         )}
 
         {/* Share on Based button - mobile only, only after mint */}
-        {isMobile && hasMintedNft && (
+        {isMobile && externalHasMintedNft && (
           <Button
             onClick={handleBasedShare}
             disabled={isSharing || !imageDataUrl}
@@ -196,7 +196,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
         )}
 
         {/* Share on Warpcast button - only after mint */}
-        {hasMintedNft && (
+        {externalHasMintedNft && (
           <Button
             onClick={handleWarpcastShare}
             disabled={isSharing || !imageDataUrl}
