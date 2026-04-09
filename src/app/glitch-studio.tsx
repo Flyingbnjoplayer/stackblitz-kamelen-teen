@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { GlitchEditor } from '@/components/glitch-editor';
 import { GlitchControls, type EffectState } from '@/components/glitch-controls';
 import { WalletConnectButton } from '@/components/wallet-connect-button';
@@ -82,10 +83,13 @@ useEffect(() => {
   // Change image - clears image AND resets mint state
   const handleChangeImage = useCallback(() => {
     console.log('🔄 handleChangeImage called - resetting mint state');
-    setResetTrigger((prev) => prev + 1);
-    setHasMintedNft(false);
-    setEditedImage(null);
-    setHasImage(false);
+     // ➕ WRAP IN flushSync
+    flushSync(() => {
+      setResetTrigger((prev) => prev + 1);
+      setHasMintedNft(false); 
+      setEditedImage(null);
+      setHasImage(false);
+    });
   }, []);
 
   const handleEffectChange = useCallback((effectId: string, value: number) => {
