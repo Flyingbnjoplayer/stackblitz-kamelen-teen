@@ -23,14 +23,14 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   const [isSharing, setIsSharing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isMintModalOpen, setIsMintModalOpen] = useState<boolean>(false);
-  const justMintedRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
+  // justMintedRef removed
 
   // Hooks
   const isInFarcaster = useIsInFarcaster();
   const { address, isConnected } = useFarcasterWallet();
 
-  // Effect: Debug logging (Moved here to fix hook order)
+  // Effect: Debug logging
   useEffect(() => {
     console.log('🎨 ShareButtons - address:', address, 'isConnected:', isConnected, 'isInFarcaster:', isInFarcaster);
   }, [address, isConnected, isInFarcaster]);
@@ -39,22 +39,6 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
   }, []);
-
-  // Effect: Handle image changes (Grace period fix)
-  useEffect(() => {
-    // If we just minted, ignore the next image change (it's likely just noise)
-    if (justMintedRef.current) {
-      console.log('🔄 Image changed, but ignoring because mint just finished');
-      justMintedRef.current = false; // Reset flag for next time
-      return;
-    }
-    
-    // If we have a minted state, and the image changes, tell the parent to reset.
-    if (hasMintedNft && onImageChange) {
-      console.log('🔄 Image URL changed in ShareButtons, notifying parent to reset mint state');
-      onImageChange();
-    }
-  }, [imageDataUrl, hasMintedNft, onImageChange]);
 
   // Effect: Visibility change
   useEffect(() => {
@@ -76,7 +60,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
 
   const handleMintSuccess = () => {
     console.log('🎯 handleMintSuccess called in ShareButtons');
-    justMintedRef.current = true;
+    // justMintedRef logic removed
     if (onMintSuccess) onMintSuccess();
   };
 
@@ -87,23 +71,6 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
     isConnected,
     imageDataUrlLength: imageDataUrl?.length
   });
-
-  useEffect(() => {
-    const handleVisibilityChange = (): void => {
-      if (document.visibilityState === 'visible') {
-        console.log('App became visible, resetting share button state');
-        setTimeout(() => {
-          setIsSharing(false);
-        }, 300);
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
 
   const handleBasedShare = async (): Promise<void> => {
     console.log('Share button clicked');
