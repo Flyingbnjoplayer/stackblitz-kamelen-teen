@@ -40,10 +40,11 @@ export function NFTMintModal({
   const { switchChainAsync } = useSwitchChain();
   const chainId = useChainId();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: txHash,
+    hash: txHash ?? null, // ✅ Force null if undefined. This stops the hook from searching.
+    ...
   });
 
-  // 🔄 Clear transaction state when image URL changes
+ // 🔄 Clear transaction state when image URL changes
   useEffect(() => {
     console.log('🔄 Image URL changed, clearing transaction state');
     console.log('  Old:', lastImageUrl.current?.slice(0, 50));
@@ -53,9 +54,10 @@ export function NFTMintModal({
     lastImageUrl.current = imageUrl || '';
     
     // Reset transaction state
-    setTxHash(undefined); // ✅ This automatically makes isConfirmed = false
+    setTxHash(null); // ✅ Use null here too
     hasCalledSuccess.current = false;
   }, [imageUrl]);
+  
   // Restore pending transaction on mount (survives app restart when returning from wallet)
   useEffect(() => {
     const pendingTx = localStorage.getItem('pendingMintTx');
