@@ -24,14 +24,25 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isMintModalOpen, setIsMintModalOpen] = useState<boolean>(false);
   const justMintedRef = useRef(false);
-  const isInFarcaster = useIsInFarcaster();
-  const { address, isConnected } = useFarcasterWallet();
   const [isMobile, setIsMobile] = useState(false);
 
-  console.log('🎨 ShareButtons - address:', address, 'isConnected:', isConnected, 'isInFarcaster:', isInFarcaster);
+  // Hooks
+  const isInFarcaster = useIsInFarcaster();
+  const { address, isConnected } = useFarcasterWallet();
 
-   useEffect(() => {
-     // If we just minted, ignore the next image change (it's likely just noise)
+  // Effect: Debug logging (Moved here to fix hook order)
+  useEffect(() => {
+    console.log('🎨 ShareButtons - address:', address, 'isConnected:', isConnected, 'isInFarcaster:', isInFarcaster);
+  }, [address, isConnected, isInFarcaster]);
+
+  // Effect: Mobile detection
+  useEffect(() => {
+    setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  }, []);
+
+  // Effect: Handle image changes (Grace period fix)
+  useEffect(() => {
+    // If we just minted, ignore the next image change (it's likely just noise)
     if (justMintedRef.current) {
       console.log('🔄 Image changed, but ignoring because mint just finished');
       justMintedRef.current = false; // Reset flag for next time
@@ -44,9 +55,23 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
       onImageChange();
     }
   }, [imageDataUrl, hasMintedNft, onImageChange]);
-  
+
+  // Effect: Visibility change
   useEffect(() => {
-    setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+    const handleVisibilityChange = (): void => {
+      if (document.visibilityState === 'visible') {
+        console.log('App became visible, resetting share button state');
+        setTimeout(() => {
+          setIsSharing(false);
+        }, 300);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const handleMintSuccess = () => {
@@ -55,7 +80,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
     if (onMintSuccess) onMintSuccess();
   };
 
-   // Debug logging
+  // Debug logging
   console.log('🔧 ShareButtons state:', {
     isMintModalOpen,
     hasMintedNft,
