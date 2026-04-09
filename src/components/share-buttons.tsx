@@ -18,7 +18,7 @@ export type ShareButtonsProps = {
 };
 
 export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSuccess, onImageChange, hasMintedNft: externalHasMintedNft }: ShareButtonsProps) {
-  console.log('🎨 ShareButtons render - hasMintedNft:', hasMintedNft);
+  console.log('🎨 ShareButtons render - hasMintedNft:', externalHasMintedNft);
   
   const [isSharing, setIsSharing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
