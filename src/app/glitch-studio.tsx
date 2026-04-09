@@ -205,6 +205,7 @@ useEffect(() => {
                 key={editedImage}  // Force remount when image changes
                 imageDataUrl={editedImage}
                 onMintSuccess={handleMintSuccess}
+                onImageChange={() => sethasMintedNft(false)}
                 onSuccessfulPost={handleSuccessfulPost}
                 hasMintedNft={hasMintedNft}
               />

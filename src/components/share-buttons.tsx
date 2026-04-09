@@ -13,22 +13,30 @@ export type ShareButtonsProps = {
   onShare?: () => void;
   onSuccessfulPost?: () => void;
   onMintSuccess?: () => void;
+  onImageChange?: () => void;
   hasMintedNft?: boolean;
 };
 
-export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSuccess, hasMintedNft }: ShareButtonsProps) {
+export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSuccess, onImageChange, hasMintedNft }: ShareButtonsProps) {
   console.log('🎨 ShareButtons render - hasMintedNft:', hasMintedNft);
   
   const [isSharing, setIsSharing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isMintModalOpen, setIsMintModalOpen] = useState<boolean>(false);
-
   const isInFarcaster = useIsInFarcaster();
   const { address, isConnected } = useFarcasterWallet();
   const [isMobile, setIsMobile] = useState(false);
 
   console.log('🎨 ShareButtons - address:', address, 'isConnected:', isConnected, 'isInFarcaster:', isInFarcaster);
 
+   useEffect(() => {
+    // If we have a minted state, and the image changes, tell the parent to reset.
+    if (hasMintedNft && onImageChange) {
+      console.log('🔄 Image URL changed in ShareButtons, notifying parent to reset mint state');
+      onImageChange();
+    }
+  }, [imageDataUrl, hasMintedNft, onImageChange]);
+  
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
   }, []);
