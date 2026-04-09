@@ -30,7 +30,7 @@ export default function GlitchStudio() {
   const [effectStates, setEffectStates] = useState<EffectState>(defaultEffects);
   const [resetTrigger, setResetTrigger] = useState(0);
   const [hasImage, setHasImage] = useState(false);
-  const [hasMintedNft, sethasMintedNft] = useState(false);
+  const [hasMintedNft, setHasMintedNft] = useState(false);
   const [lockEffects, setLockEffects] = useState(false);
   const { isConnected } = useAccount();
   const { switchChain } = useSwitchChain();
@@ -83,7 +83,7 @@ useEffect(() => {
   const handleChangeImage = useCallback(() => {
     console.log('🔄 handleChangeImage called - resetting mint state');
     setResetTrigger((prev) => prev + 1);
-    sethasMintedNft(false);
+    setHasMintedNft(false);
     setEditedImage(null);
     setHasImage(false);
   }, []);
@@ -109,7 +109,7 @@ useEffect(() => {
     // Reset mint state when new image is loaded
     if (loaded) {
       console.log('📷 New image loaded - resetting hasMintedNft to false');
-      sethasMintedNft(false);
+      setHasMintedNft(false);
     }
   }, []);
 
@@ -127,12 +127,12 @@ useEffect(() => {
   const handleMintSuccess = useCallback(() => {
     console.log('🎯 handleMintSuccess called - setting hasMintedNft to true');
     console.trace('Stack trace for handleMintSuccess');
-    sethasMintedNft(true);
+    setHasMintedNft(true);
   }, []);
 
   const handleSuccessfulPost = useCallback(() => {
     // Reset everything after successful share
-    sethasMintedNft(false);
+    setHasMintedNft(false);
     setHasImage(false);
     setEditedImage(null);
     setResetTrigger((prev) => prev + 1);
@@ -205,7 +205,7 @@ useEffect(() => {
                 key={editedImage}  // Force remount when image changes
                 imageDataUrl={editedImage}
                 onMintSuccess={handleMintSuccess}
-                onImageChange={() => sethasMintedNft(false)}
+                onImageChange={() => setHasMintedNft(false)}
                 onSuccessfulPost={handleSuccessfulPost}
                 hasMintedNft={hasMintedNft}
               />
