@@ -246,6 +246,4 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   );
 }
 
-function useRef(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
+
