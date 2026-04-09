@@ -23,6 +23,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   const [isSharing, setIsSharing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isMintModalOpen, setIsMintModalOpen] = useState<boolean>(false);
+  const justMintedRef = useRef(false);
   const isInFarcaster = useIsInFarcaster();
   const { address, isConnected } = useFarcasterWallet();
   const [isMobile, setIsMobile] = useState(false);
@@ -30,6 +31,13 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
   console.log('🎨 ShareButtons - address:', address, 'isConnected:', isConnected, 'isInFarcaster:', isInFarcaster);
 
    useEffect(() => {
+     // If we just minted, ignore the next image change (it's likely just noise)
+    if (justMintedRef.current) {
+      console.log('🔄 Image changed, but ignoring because mint just finished');
+      justMintedRef.current = false; // Reset flag for next time
+      return;
+    }
+    
     // If we have a minted state, and the image changes, tell the parent to reset.
     if (hasMintedNft && onImageChange) {
       console.log('🔄 Image URL changed in ShareButtons, notifying parent to reset mint state');
@@ -43,6 +51,7 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
 
   const handleMintSuccess = () => {
     console.log('🎯 handleMintSuccess called in ShareButtons');
+    justMintedRef.current = true;
     if (onMintSuccess) onMintSuccess();
   };
 
@@ -235,4 +244,8 @@ export function ShareButtons({ imageDataUrl, onShare, onSuccessfulPost, onMintSu
       />
     </>
   );
+}
+
+function useRef(arg0: boolean) {
+  throw new Error('Function not implemented.');
 }
