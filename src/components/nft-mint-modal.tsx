@@ -45,15 +45,19 @@ export function NFTMintModal({
 
   // CRITICAL: Clear transaction state when imageUrl changes
   // This prevents the old transaction from triggering onMintSuccess for a new image
+  // 🔄 Clear transaction state when image URL changes
   useEffect(() => {
-    if (imageUrl !== lastImageUrl.current) {
-      console.log('🔄 Image URL changed, clearing transaction state');
-      console.log('  Old:', lastImageUrl.current?.slice(0, 50));
-      console.log('  New:', imageUrl?.slice(0, 50));
-      lastImageUrl.current = imageUrl || '';
-      setTxHash(undefined);
-      hasCalledSuccess.current = false;
-    }
+    console.log('🔄 Image URL changed, clearing transaction state');
+    console.log('  Old:', lastImageUrl.current?.slice(0, 50));
+    console.log('  New:', imageUrl?.slice(0, 50));
+    
+    // Update the ref
+    lastImageUrl.current = imageUrl || '';
+    
+    // Reset ALL transaction state
+    setTxHash(undefined);
+    setIsConfirmed(false);
+    hasCalledSuccess.current = false; // ✅ Ensure this ref is also reset
   }, [imageUrl]);
 
   // Restore pending transaction on mount (survives app restart when returning from wallet)
